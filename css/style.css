@@ -415,47 +415,44 @@ mark{background:#F7B73355;color:inherit;padding:0 2px;border-radius:4px;box-shad
 .lbnote{font-size:12.5px;line-height:1.45;text-align:center;color:var(--muted);padding:2px 6px}
 .lbnote b{color:var(--ink)}
 
-/* ---------- Facebook пост карт (card.post): цагаан карт, FB-ийн өнгө ---------- */
-.fb{--fbbg:#F0F2F5;--fbtext:#050505;--fbgray:#65676B;--fbline:#CED0D4;
-  position:relative;display:flex;flex-direction:column;gap:10px;padding-top:12px;overflow:hidden;
-  background:#fff;color:var(--fbtext);border-radius:var(--radius);box-shadow:var(--shadow);
-  font-family:"Segoe UI",Helvetica,Arial,Inter,sans-serif;user-select:none;-webkit-user-select:none}
-.face.front > .fb{position:absolute;inset:0}
-.fbh{display:flex;align-items:center;gap:9px;padding:0 14px}
-.fbav{width:40px;height:40px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12.5px;font-weight:800}
-.fbid{flex:1;min-width:0;display:flex;flex-direction:column}
-.fbid b{font-size:15px;font-weight:700;color:var(--fbtext);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.fbid small{font-size:13px;color:var(--fbgray)}
-.fbvf{display:inline-flex;align-items:center;justify-content:center;width:14px;height:14px;margin-left:5px;vertical-align:-1px;border-radius:50%;background:#1877F2;color:#fff;font-size:8.5px;font-weight:900}
-.fbmore{color:var(--fbgray);font-weight:900;letter-spacing:1px;font-size:16px}
-.fbtxt{padding:0 14px;font-size:15px;line-height:1.38;color:var(--fbtext)}
-.fbtxt mark{background:#FFE45C;box-shadow:none}
-.fbimg{position:relative;flex:1 1 0;min-height:120px;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--fbbg)}
-.fbemo{font-size:64px;line-height:1;filter:drop-shadow(0 6px 10px rgba(0,0,0,.18))}
-.fbcap{position:absolute;left:10px;bottom:10px;max-width:calc(100% - 20px);padding:4px 9px;border-radius:7px;background:rgba(0,0,0,.6);color:#fff;font-size:11.5px;font-weight:600;line-height:1.3}
-.fbplay{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:64px;height:64px;border-radius:50%;padding-left:5px;
-  display:flex;align-items:center;justify-content:center;background:rgba(255,255,255,.22);border:2px solid rgba(255,255,255,.9);color:#fff;font-size:24px}
-.fbimg.video .fbemo{opacity:.25}
-.fbimg.photo{background:linear-gradient(160deg,#E2E8F0,#94A3B8)}
-.fbimg.doc{background:linear-gradient(160deg,#EEF2FF,#A5B4FC)}
-.fbimg.video{background:radial-gradient(circle at 50% 40%,#3A3B3C,#0B0B0C 75%)}
-.fbimg.crowd{background:linear-gradient(160deg,#FEF3C7,#F59E0B)}
-.fbimg.food{background:linear-gradient(160deg,#FFEDD5,#FB923C)}
-.fbimg.smog{background:linear-gradient(180deg,#E7E5E4,#78716C)}
-.fbimg.phone{background:linear-gradient(160deg,#E0E7FF,#818CF8)}
-.fbimg.nature{background:linear-gradient(160deg,#FECACA,#B91C1C)}
-.fbimg.product{background:linear-gradient(160deg,#CCFBF1,#2DD4BF)}
-.fbre{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:0 14px;font-size:13px;color:var(--fbgray);white-space:nowrap}
-.fbre-l{display:flex;align-items:center;gap:6px}
-.fbemos{display:flex}
-.fbemos i{position:relative;width:20px;height:20px;border-radius:50%;margin-right:-5px;display:flex;align-items:center;justify-content:center;
-  font-style:normal;font-size:12px;background:#fff;border:2px solid #fff;box-shadow:0 0 0 1px var(--fbbg)}
-.fbemos i:last-child{margin-right:0}
-.fbact{display:flex;justify-content:space-around;margin:0 12px;padding:8px 0 10px;border-top:1px solid var(--fbline);font-size:13.5px;font-weight:600;color:var(--fbgray);pointer-events:none}
-.fb.mini{flex-shrink:0;user-select:text;-webkit-user-select:text}
-.fb.mini .fbimg{flex:none;height:120px;min-height:0}
-.fb.mini .fbemo{font-size:44px}
-.fb.mini .fbact{display:none}
-.srcs{list-style:none;display:flex;flex-direction:column;gap:5px;margin-top:4px;font-size:12.5px}
+/* ---------- Facebook пост карт (design/fb-card-reference.html-ээс) ---------- */
+.fb{--fb-bg:#F0F2F5;--fb-card:#fff;--fb-text:#050505;--fb-muted:#65676B;--fb-line:#E4E6EB;--fb-blue:#1877F2;
+  background:var(--fb-card);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.2),var(--shadow);overflow:hidden;
+  font-family:Inter,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--fb-text);user-select:none;-webkit-user-select:none}
+.fb-head{display:flex;align-items:center;gap:8px;padding:12px 12px 0}
+.fb-av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.fb-who{min-width:0}
+.fb-name{font-weight:600;font-size:15px;line-height:1.2;display:flex;align-items:center;gap:4px}
+.fb-ver{width:14px;height:14px;border-radius:50%;background:var(--fb-blue);color:#fff;font-size:9px;display:grid;place-items:center;flex:none}
+.fb-meta{font-size:13px;color:var(--fb-muted)}
+.fb-dots{margin-left:auto;color:var(--fb-muted);font-size:20px;letter-spacing:1px}
+.fb-text{padding:8px 12px 10px;font-size:15px;line-height:1.38}
+.fb-text mark{background:#FDE68A;padding:0 2px;border-radius:3px;box-shadow:none}
+.fb-pic{aspect-ratio:16/10;background:#DDDFE2;overflow:hidden}
+.fb-img{display:block;width:100%;height:100%;object-fit:cover;-webkit-user-drag:none}
+.fb-stats{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 12px;font-size:14px;color:var(--fb-muted);white-space:nowrap}
+.fb-rx{display:flex;align-items:center;gap:6px}.fb-rx span.e{display:flex;padding-left:4px}
+.fb-rx span.e i{font-style:normal;width:20px;height:20px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:13px;margin-left:-4px;box-shadow:0 0 0 2px #fff}
+.fb-act{display:flex;border-top:1px solid var(--fb-line);margin:0 12px;padding:4px 0;pointer-events:none}
+.fb-act div{flex:1;text-align:center;padding:8px 0;font-size:14px;font-weight:600;color:var(--fb-muted)}
+
+/* Тоглох үед: карт өөрийн өндөртэй, овооны төвд. Багтахгүй бол текстийг биш, зургийг багасгана */
+.face.front > .fb{position:absolute;left:0;right:0;top:0;bottom:0;margin:auto 0;height:fit-content;max-height:100%;display:flex;flex-direction:column}
+.face.front > .fb > *{flex-shrink:0}
+.face.front > .fb > .fb-pic{flex:0 1 auto;min-height:0}
+.card:has(.fb) .tint{display:none}
 /* Овооны ард байгаа картууд: зөвхөн цагаан ирмэг харагдана (текст цухуйхгүй) */
 .card:not([data-pos="0"]) .fb > *{visibility:hidden}
+.fb.mini{flex-shrink:0;user-select:text;-webkit-user-select:text}
+
+/* ---------- Алдааны дүн (design/fb-card-reference.html-ийн .rev) ---------- */
+.rev{flex-shrink:0;background:#fff;color:#050505;border-radius:16px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.15);font-size:14px;line-height:1.45}
+.rev-verdict{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-weight:600;margin-bottom:8px}
+.rev-pill{padding:3px 10px;border-radius:999px;color:#fff;font-size:13px}
+.rev-pill.t{background:#10B981}.rev-pill.f{background:#F43F5E}.rev-pill.u{background:#F59E0B}
+.rev-tech{display:inline-block;background:#EEF2FF;color:#4338CA;font-weight:600;font-size:12px;padding:3px 8px;border-radius:6px;margin:6px 0}
+.rev-tip{margin-top:6px;color:#65676B}
+.rev-src{margin-top:10px;border-top:1px solid #E4E6EB;padding-top:8px}
+.rev-src b{font-size:12px;color:#65676B;text-transform:uppercase;letter-spacing:.04em}
+.rev-src a{display:block;color:#1877F2;text-decoration:none;padding:6px 0;font-weight:500;overflow-wrap:anywhere}
+.rev-spread{margin-top:6px;font-size:12.5px;color:#65676B}

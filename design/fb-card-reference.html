@@ -1,0 +1,51 @@
+<!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FB карт · загвар</title>
+<style>
+:root{--fb-bg:#F0F2F5;--fb-card:#fff;--fb-text:#050505;--fb-muted:#65676B;--fb-line:#E4E6EB;--fb-blue:#1877F2;
+--false:#F43F5E;--true:#10B981;--unsure:#F59E0B}
+*{box-sizing:border-box}body{margin:0;background:var(--fb-bg);font-family:Inter,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;color:var(--fb-text)}
+.wrap{max-width:430px;margin:0 auto;padding:12px;display:flex;flex-direction:column;gap:14px}
+h2{font-size:14px;color:var(--fb-muted);margin:10px 4px 0}
+/* ---- Facebook пост ---- */
+.fb{background:var(--fb-card);border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.2);overflow:hidden}
+.fb-head{display:flex;align-items:center;gap:8px;padding:12px 12px 0}
+.fb-av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:700;font-size:13px;flex:none}
+.fb-name{font-weight:600;font-size:15px;line-height:1.2;display:flex;align-items:center;gap:4px}
+.fb-ver{width:14px;height:14px;border-radius:50%;background:var(--fb-blue);color:#fff;font-size:9px;display:grid;place-items:center}
+.fb-meta{font-size:13px;color:var(--fb-muted)}
+.fb-dots{margin-left:auto;color:var(--fb-muted);font-size:20px;letter-spacing:1px}
+.fb-text{padding:8px 12px 10px;font-size:15px;line-height:1.38}
+.fb-img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover;background:#ddd}
+.fb-stats{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;font-size:14px;color:var(--fb-muted)}
+.fb-rx{display:flex;align-items:center;gap:6px}.fb-rx span.e{display:flex}
+.fb-rx span.e i{font-style:normal;width:20px;height:20px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:13px;margin-left:-4px;box-shadow:0 0 0 2px #fff}
+.fb-act{display:flex;border-top:1px solid var(--fb-line);margin:0 12px;padding:4px 0}
+.fb-act div{flex:1;text-align:center;padding:8px 0;font-size:14px;font-weight:600;color:var(--fb-muted)}
+/* ---- Алдааны дүн ---- */
+.rev{background:#fff;border-radius:16px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.15);font-size:14px;line-height:1.45}
+.rev .verdict{display:flex;gap:8px;flex-wrap:wrap;font-weight:600;margin-bottom:8px}
+.pill{padding:3px 10px;border-radius:999px;color:#fff;font-size:13px}
+mark{background:#FDE68A;padding:0 2px;border-radius:3px}
+.tech{display:inline-block;background:#EEF2FF;color:#4338CA;font-weight:600;font-size:12px;padding:3px 8px;border-radius:6px;margin:6px 0}
+.src{margin-top:10px;border-top:1px solid var(--fb-line);padding-top:8px}
+.src b{font-size:12px;color:var(--fb-muted);text-transform:uppercase;letter-spacing:.04em}
+.src a{display:block;color:var(--fb-blue);text-decoration:none;padding:6px 0;font-weight:500}
+.src a::after{content:" ↗"}
+</style></head><body><div class="wrap" id="app"></div>
+<script src="../data/cards.js"></script>
+<script>
+const L={true:["✓ Үнэн","var(--true)"],false:["✕ Худал","var(--false)"],unsure:["? Эргэлзээтэй","var(--unsure)"]};
+const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+function post(c,mark=false){const p=c.post,g=p.page;let t=esc(c.text);if(mark&&c.highlight)t=t.replace(esc(c.highlight),`<mark>${esc(c.highlight)}</mark>`);
+return `<article class="fb"><div class="fb-head"><div class="fb-av" style="background:${g.color}">${g.ini}</div><div><div class="fb-name">${esc(g.name)}${g.verified?'<span class="fb-ver">✓</span>':''}</div>
+<div class="fb-meta">${g.sponsored?'Ивээн тэтгэсэн':p.time} · ${p.privacy}</div></div><div class="fb-dots">···</div></div>
+<div class="fb-text">${t}</div><img class="fb-img" src="../${p.image.src}" alt="${esc(p.image.alt)}">
+<div class="fb-stats"><div class="fb-rx"><span class="e">${p.reactions.top.map(e=>`<i>${e}</i>`).join('')}</span>${p.reactions.total}</div><div>${p.comments} сэтгэгдэл · ${p.shares} хуваалцсан</div></div>
+<div class="fb-act"><div>👍 Таалагдсан</div><div>💬 Сэтгэгдэл</div><div>↗ Хуваалцах</div></div></article>`}
+function review(c,you="true"){const [a,ac]=L[c.answer],[y,yc]=L[you];
+return `<div class="rev"><div class="verdict">Чи: <span class="pill" style="background:${yc}">${y}</span> → Зөв нь: <span class="pill" style="background:${ac}">${a}</span></div>
+<span class="tech">${esc(c.technique)}</span><div>${esc(c.why)}</div><div style="margin-top:6px;color:#65676B">${esc(c.tip)}</div>
+<div class="src"><b>Эх сурвалж</b>${c.sources.map(s=>`<a href="${s.url}" target="_blank" rel="noopener">${esc(s.name)}</a>`).join('')}</div></div>`}
+const app=document.getElementById('app');const only=new URLSearchParams(location.search).get('id');
+for(const c of CARDS){if(only&&c.id!==only)continue;app.insertAdjacentHTML('beforeend',`<h2>${c.id} · тоглох үед</h2>${post(c)}<h2>${c.id} · алдааны дүн</h2>${post(c,true)}${review(c,c.answer==="true"?"false":"true")}`)}
+</script></body></html>

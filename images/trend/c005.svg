@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750"><defs><linearGradient id="st" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#e7e5e4"/><stop offset="1" stop-color="#a8a29e"/></linearGradient>
+<linearGradient id="puff" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ffffff"/><stop offset="1" stop-color="#e5e7eb"/></linearGradient></defs><rect width="1200" height="750" fill="url(#st)"/>
+<g opacity=".5"><rect x="0" y="80" width="150" height="600" fill="#a8a29e"/><rect x="190" y="110" width="150" height="600" fill="#a8a29e"/><rect x="380" y="140" width="150" height="600" fill="#a8a29e"/><rect x="570" y="80" width="150" height="600" fill="#a8a29e"/><rect x="760" y="110" width="150" height="600" fill="#a8a29e"/><rect x="950" y="140" width="150" height="600" fill="#a8a29e"/><rect x="1140" y="80" width="150" height="600" fill="#a8a29e"/></g>
+<rect y="600" width="1200" height="150" fill="#78716c"/>
+<g transform="translate(600 360)">
+<ellipse cx="0" cy="370" rx="180" ry="20" fill="#000" opacity=".25"/>
+<path d="M-170 340 Q-200 40 -110 -60 Q0 -110 110 -60 Q200 40 170 340Z" fill="url(#puff)"/>
+<path d="M-185 0 Q0 30 185 0" stroke="#d6d3d1" stroke-width="5" fill="none"/><path d="M-181 48 Q0 78 181 48" stroke="#d6d3d1" stroke-width="5" fill="none"/><path d="M-177 96 Q0 126 177 96" stroke="#d6d3d1" stroke-width="5" fill="none"/><path d="M-173 144 Q0 174 173 144" stroke="#d6d3d1" stroke-width="5" fill="none"/><path d="M-169 192 Q0 222 169 192" stroke="#d6d3d1" stroke-width="5" fill="none"/><path d="M-165 240 Q0 270 165 240" stroke="#d6d3d1" stroke-width="5" fill="none"/><path d="M-161 288 Q0 318 161 288" stroke="#d6d3d1" stroke-width="5" fill="none"/><path d="M-157 336 Q0 366 157 336" stroke="#d6d3d1" stroke-width="5" fill="none"/>
+<path d="M0 -70 L0 340" stroke="#cbd5e1" stroke-width="6"/>
+<circle cx="0" cy="-140" r="70" fill="#e7c2a0"/><path d="M-62 -170 Q0 -230 62 -170 Q40 -195 0 -198 Q-40 -195 -62 -170Z" fill="#fafafa"/>
+<rect x="-50" y="-150" width="40" height="20" rx="8" fill="none" stroke="#111" stroke-width="5"/><rect x="10" y="-150" width="40" height="20" rx="8" fill="none" stroke="#111" stroke-width="5"/>
+<path d="M0 -40 L0 60 M-30 0 L30 0" stroke="#d4af37" stroke-width="10"/>
+</g></svg>

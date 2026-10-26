@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750"><defs></defs><rect width="1200" height="750" fill="#0b0f19"/><rect x="20" y="20" width="370" height="280" rx="14" fill="#475569"/>
+<circle cx="205" cy="140" r="52" fill="#e0b48a"/><path d="M115 300 Q120 200 205 195 Q290 200 295 300Z" fill="#0f172a"/>
+<rect x="32" y="256" width="75" height="32" rx="6" fill="rgba(0,0,0,.6)"/><text x="46" y="279" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="20" font-weight="600" fill="#fff">CFO</text><rect x="410" y="20" width="370" height="280" rx="14" fill="#57534e"/>
+<circle cx="595" cy="140" r="52" fill="#c68e64"/><path d="M505 300 Q510 200 595 195 Q680 200 685 300Z" fill="#0f172a"/>
+<rect x="422" y="256" width="120" height="32" rx="6" fill="rgba(0,0,0,.6)"/><text x="436" y="279" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="20" font-weight="600" fill="#fff">Финанс</text><rect x="800" y="20" width="370" height="280" rx="14" fill="#3f3f46"/>
+<circle cx="985" cy="140" r="52" fill="#f1c9a5"/><path d="M895 300 Q900 200 985 195 Q1070 200 1075 300Z" fill="#0f172a"/>
+<rect x="812" y="256" width="120" height="32" rx="6" fill="rgba(0,0,0,.6)"/><text x="826" y="279" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="20" font-weight="600" fill="#fff">Хуульч</text><rect x="20" y="320" width="370" height="280" rx="14" fill="#334155"/>
+<circle cx="205" cy="440" r="52" fill="#a8714a"/><path d="M115 600 Q120 500 205 495 Q290 500 295 600Z" fill="#0f172a"/>
+<rect x="32" y="556" width="135" height="32" rx="6" fill="rgba(0,0,0,.6)"/><text x="46" y="579" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="20" font-weight="600" fill="#fff">Нягтлан</text><rect x="410" y="320" width="370" height="280" rx="14" fill="#44403c"/>
+<circle cx="595" cy="440" r="52" fill="#e7c09b"/><path d="M505 600 Q510 500 595 495 Q680 500 685 600Z" fill="#0f172a"/>
+<rect x="422" y="556" width="60" height="32" rx="6" fill="rgba(0,0,0,.6)"/><text x="436" y="579" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="20" font-weight="600" fill="#fff">Чи</text><rect x="800" y="320" width="370" height="280" rx="14" fill="#1f2937"/>
+<circle cx="985" cy="440" r="52" fill="#d4a373"/><path d="M895 600 Q900 500 985 495 Q1070 500 1075 600Z" fill="#0f172a"/>
+<rect x="812" y="556" width="225" height="32" rx="6" fill="rgba(0,0,0,.6)"/><text x="826" y="579" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="20" font-weight="600" fill="#fff">Ахлах менежер</text><rect x="20" y="20" width="370" height="280" rx="14" fill="none" stroke="#22c55e" stroke-width="6"/>
+<rect x="0" y="620" width="1200" height="130" fill="#111827"/>
+<circle cx="480" cy="685" r="34" fill="#374151"/><circle cx="560" cy="685" r="34" fill="#374151"/><circle cx="640" cy="685" r="34" fill="#374151"/><circle cx="740" cy="685" r="34" fill="#dc2626"/>
+<text x="40" y="695" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="28" font-weight="600" fill="#9ca3af">Нууц хурал · 00:12:44</text>
+<text x="1160" y="695" text-anchor="end" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="34" font-weight="800" fill="#f87171">$25,000,000</text></svg>

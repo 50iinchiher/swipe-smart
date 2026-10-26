@@ -28,29 +28,23 @@ window.Screens = (function () {
     return '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + ' ↗</a>';
   }
 
-  // Facebook постын зургийн CSS placeholder: kind → emoji (өнгө нь css/style.css-ийн .fbimg.<kind>)
-  const IMG_EMOJI = { photo: '📷', doc: '📄', video: '🎬', crowd: '👥', food: '🍯', smog: '🌫️', phone: '📱', nature: '🪨', product: '📦' };
-
-  // card.post байвал Facebook пост шиг: аватар, нэр, цаг, текст, зураг, реакц, товчнууд (дарагдахгүй)
+  // card.post байвал Facebook пост шиг (design/fb-card-reference.html): аватар, нэр ✓, цаг · 🌐, ···,
+  // текст, 16:10 зураг, реакц, сэтгэгдэл · хуваалцсан, товчнууд (дарагдахгүй)
   function fbPost(p, opts) {
-    const fb = p.post, pg = fb.page || {}, img = fb.image, re = fb.reactions || {};
-    const meta = (fb.sponsored ? 'Ивээн тэтгэсэн' : esc(fb.time || '')) + ' · ' + esc(fb.privacy || '🌐');
-    const pic = img ? '<div class="fbimg ' + esc(img.kind) + '"><span class="fbemo">' + (IMG_EMOJI[img.kind] || '🖼️') + '</span>' +
-      (img.kind === 'video' ? '<span class="fbplay">▶</span>' : '') +
-      (img.caption ? '<span class="fbcap">' + esc(img.caption) + '</span>' : '') + '</div>' : '';
-    const top = (re.top || []).slice(0, 3).map((e, k) => '<i style="z-index:' + (3 - k) + '">' + esc(e) + '</i>').join('');
-    return '<article class="fb' + (img ? '' : ' noimg') + (opts.mini ? ' mini' : '') + '">' +
-      '<header class="fbh">' +
-        '<span class="fbav" style="background:' + esc(pg.color || '#65676B') + '">' + esc(pg.ini || '') + '</span>' +
-        '<span class="fbid"><b>' + esc(pg.name || '') + (pg.verified ? '<span class="fbvf" aria-label="Баталгаажсан">✔</span>' : '') + '</b>' +
-          '<small>' + meta + '</small></span>' +
-        '<span class="fbmore">···</span>' +
-      '</header>' +
-      '<p class="fbtxt">' + cardText(p, opts.mini) + '</p>' +
+    const fb = p.post, g = fb.page || {}, img = fb.image, re = fb.reactions || {};
+    const meta = (fb.sponsored || g.sponsored ? 'Ивээн тэтгэсэн' : esc(fb.time || '')) + ' · ' + esc(fb.privacy || '🌐');
+    // Зураг ачаалагдахгүй бол саарал placeholder үлдэнэ
+    const pic = img && img.src ? '<div class="fb-pic"><img class="fb-img" src="' + esc(img.src) + '" alt="' + esc(img.alt || '') +
+      '" loading="eager" draggable="false" onerror="this.style.visibility=\'hidden\'"></div>' : '';
+    return '<article class="fb' + (opts.mini ? ' mini' : '') + '">' +
+      '<div class="fb-head"><div class="fb-av" style="background:' + esc(g.color || '#65676B') + '">' + esc(g.ini || '') + '</div>' +
+        '<div class="fb-who"><div class="fb-name">' + esc(g.name || '') + (g.verified ? '<span class="fb-ver">✓</span>' : '') + '</div>' +
+        '<div class="fb-meta">' + meta + '</div></div><div class="fb-dots">···</div></div>' +
+      '<div class="fb-text">' + cardText(p, opts.mini) + '</div>' +
       pic +
-      '<div class="fbre"><span class="fbre-l"><span class="fbemos">' + top + '</span>' + esc(re.total || '') + '</span>' +
-        '<span>' + esc(fb.comments || '0') + ' сэтгэгдэл · ' + esc(fb.shares || '0') + ' хуваалцсан</span></div>' +
-      '<div class="fbact" aria-hidden="true"><span>👍 Таалагдсан</span><span>💬 Сэтгэгдэл</span><span>↗ Хуваалцах</span></div>' +
+      '<div class="fb-stats"><div class="fb-rx"><span class="e">' + (re.top || []).map(e => '<i>' + esc(e) + '</i>').join('') + '</span>' + esc(re.total || '') + '</div>' +
+        '<div>' + esc(fb.comments || '0') + ' сэтгэгдэл · ' + esc(fb.shares || '0') + ' хуваалцсан</div></div>' +
+      '<div class="fb-act" aria-hidden="true"><div>👍 Таалагдсан</div><div>💬 Сэтгэгдэл</div><div>↗ Хуваалцах</div></div>' +
       '</article>';
   }
 
@@ -389,6 +383,8 @@ window.Screens = (function () {
   function play(root, nav, data) {
     const game = data.game;
     const posts = game.ids.map(Game.post);
+    // Тоглоом эхлэхэд бүх зургийг урьдчилан ачаална
+    posts.forEach(p => { if (p && p.post && p.post.image && p.post.image.src) new Image().src = p.post.image.src; });
     const title = (game.cat ? Game.catName(game.cat) : 'Өдрийн 10') + (game.practice ? ' · Дадлага' : '');
     root.innerHTML = `
       <section class="screen play">
@@ -624,20 +620,21 @@ window.Screens = (function () {
       // sources (бүх эх сурвалж) байвал бүгдийг, үгүй бол source-ийг жагсаана
       const srcs = (Array.isArray(p.sources) && p.sources.length ? p.sources : p.source ? [p.source] : [])
         .filter(s => s && (s.name || s.url));
+      // design/fb-card-reference.html-ийн загвар: пост (тодруулгатай) → Чи → Зөв нь, арга, яагаад, зөвлөгөө, ЭХ СУРВАЛЖ
       return `
         <div class="slide">
-          <div class="verdict">
-            <span class="pill ${mine.cls}">Чи: ${mine.icon} ${mine.label}</span><span class="muted">→</span>
-            <span class="pill ${right.cls}">Зөв нь: ${right.icon} ${right.label}</span>
-          </div>
           ${post(p, { mini: true })}
-          ${p.technique ? '<span class="pill tech">🏷 ' + esc(p.technique) + '</span>' : ''}
-          <div class="why">${esc(p.why)}
-            ${srcs.length ? '<div class="src">📎 Шалгасан эх сурвалж:</div><ul class="srcs">' +
-              srcs.map(s => '<li>' + extLink(s.url, s.name || s.url) + '</li>').join('') + '</ul>' : ''}
-            ${media.url || media.label ? '<div class="src">🖼 ' + extLink(media.url, media.label || 'Зураг/бичлэг') + '</div>' : ''}
-            ${p.spread ? '<div class="src">📅 Тархсан: ' + esc(p.spread) + '</div>' : ''}</div>
-          ${tip ? '<div class="tipbox">🛡 ' + esc(tip) + '</div>' : ''}
+          <div class="rev">
+            <div class="rev-verdict">Чи: <span class="rev-pill ${mine.cls}">${mine.icon} ${mine.label}</span> → Зөв нь:
+              <span class="rev-pill ${right.cls}">${right.icon} ${right.label}</span></div>
+            ${p.technique ? '<span class="rev-tech">' + esc(p.technique) + '</span>' : ''}
+            <div>${esc(p.why)}</div>
+            ${tip ? '<div class="rev-tip">🛡 ' + esc(tip) + '</div>' : ''}
+            ${srcs.length || media.url ? '<div class="rev-src"><b>Эх сурвалж</b>' +
+              srcs.map(s => extLink(s.url, s.name || s.url)).join('') +
+              (media.url ? extLink(media.url, media.label || 'Зураг/бичлэг') : '') + '</div>' : ''}
+            ${p.spread ? '<div class="rev-spread">📅 Тархсан: ' + esc(p.spread) + '</div>' : ''}
+          </div>
         </div>`;
     }).join('');
 
