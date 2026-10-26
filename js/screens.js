@@ -295,19 +295,15 @@ window.Screens = (function () {
           (c.board ? '<em data-rank="' + c.id + '">' + (rk[c.id] && rk[c.id].rank ? '#' + rk[c.id].rank : '') + '</em>' : '') + '</button>'
     ).join('');
 
-    // Мэдээний мөр (гүйдэг): өдрийн 10, дараалсан өдөр, картуудын 🛡 зөвлөгөөнүүд
-    const streak = Game.dayStreak();
-    const tips = (window.CARDS || []).map(c => c.tip).filter(Boolean)
-      .filter((t, k, a) => a.indexOf(t) === k).sort(() => Math.random() - 0.5).slice(0, 3);
-    const lines = [played ? 'Өнөөдрийн 10 дууссан · Маргааш шинэ 10 карт' : 'Өдрийн 10 · №' + Game.edition() + ' бэлэн — дарж тогло']
-      .concat(streak ? ['🔥 ' + streak + ' өдөр дараалан'] : []).concat(tips);
-    const run = lines.map(l => '<span>' + esc(l) + '</span><i></i>').join('');
+    // Дээд мөр (гүйдэг): найдвартай эх сурвалжуудын нэр (data/sources.js). Дарахад холбоосын жагсаалт.
+    const groups = (window.SOURCES || []).filter(g => g && g.items && g.items.length);
+    const run = groups.map(g => g.items.map(x => '<span>' + esc(x.name) + '</span><i></i>').join('')).join('');
 
     root.innerHTML = `
       <section class="screen home">
         <div class="top hometop">
-          <button class="news" data-act="news">
-            <span class="nw-l"><i></i>ӨДРИЙН 10</span>
+          <button class="news" data-act="sources">
+            <span class="nw-l">${icon('link')}ЭХ СУРВАЛЖ</span>
             <span class="nw-t"><span class="mq">${run}${run}</span></span>
           </button>
           <button class="sq" data-act="menu" aria-label="Цэс">${icon('menu')}</button>
@@ -333,10 +329,20 @@ window.Screens = (function () {
       })(t0);
     }, 250);
 
+    // Найдвартай эх сурвалжууд: зөвхөн холбоос, шинэ таб дээр
+    function sources() {
+      sheet(root, `
+        <b class="sh-t">Найдвартай эх сурвалж</b>
+        <div class="hint" style="text-align:left">Мэдээ эргэлзээтэй санагдвал эндээс шалгаарай.</div>
+        <div class="srcl">${groups.map(g => '<div class="srcg"><b>' + esc(g.group) + '</b>' +
+          g.items.map(x => extLink(x.url, x.name)).join('') + '</div>').join('')}</div>
+        <button class="btn ghost" data-close>Хаах</button>`);
+    }
+
     function menu() {
       const s = sheet(root, `
         <b class="sh-t">Өдрийн 10 · №${Game.edition()}</b>
-        <button class="btn acc" data-m="play">${icon('play')} ${played ? 'Дадлага хийх' : 'Өнөөдрийн 5'}</button>
+        <button class="btn acc" data-m="play">${icon('play')} ${played ? 'Дадлага хийх' : 'Өнөөдрийн 10'}</button>
         ${played ? '<button class="btn ghost" data-m="today">Өнөөдрийн дүн</button>' : ''}
         <button class="btn ghost" data-m="how">Яаж тоглох вэ?</button>
         <div class="hint">Ангилал бүрт өдрийн анхны тоглолт л чансаанд тооцогдоно.</div>`);
@@ -356,7 +362,7 @@ window.Screens = (function () {
       if (l) { toast('🔒 ' + l.dataset.name + ' · ' + l.dataset.need + ' XP цуглуулбал нээгдэнэ'); return; }
       const b = e.target.closest('[data-act]');
       if (!b) return;
-      if (b.dataset.act === 'news') { if (played) nav.go('end', { game: Game.todayRecord() }); else nav.start(false); }
+      if (b.dataset.act === 'sources') sources();
       else if (b.dataset.act === 'menu') menu();
     });
     bindDock(root, nav, 'home');
