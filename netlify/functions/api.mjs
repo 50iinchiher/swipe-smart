@@ -8,9 +8,9 @@
 import { getStore } from '@netlify/blobs';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 
-// posts.js, rules.js нь window.* тодорхойлдог браузерын скрипт. esbuild функцтэй хамт багцална.
+// posts.js, claims.js, rules.js нь window.* тодорхойлдог браузерын скрипт. esbuild функцтэй хамт багцална.
 globalThis.window = globalThis.window || {};
-const ready = import('../../data/posts.js').then(() => import('../../js/rules.js')).then(() => {
+const ready = import('../../data/posts.js').then(() => import('../../data/claims.js')).then(() => import('../../js/rules.js')).then(() => {
   const byId = {};
   window.POSTS.forEach(p => { byId[p.id] = p; });
   const pools = {};

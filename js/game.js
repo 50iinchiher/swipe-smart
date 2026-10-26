@@ -21,8 +21,8 @@ window.Game = (function () {
     return Math.round((Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - EPOCH) / DAY);
   }
   function edition() { return Math.max(1, dayIndex() + 1); }
-  function sets() { return Math.max.apply(null, window.POSTS.map(p => p.set)); }
-  function todaySet() { const n = sets(); return ((dayIndex() % n) + n) % n + 1; }
+  // Өдрийн 10-ыг өдрийн дугаараар (№) сонгоно. ?set=N → N дэх өдрийн багц.
+  function todaySet() { return edition(); }
   function msToMidnight() {
     const d = new Date();
     return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1) - d;
@@ -74,12 +74,26 @@ window.Game = (function () {
   function post(id) { return byId[id]; }
   const truth = R.truth, judge = R.judge;
 
+  // Өдрийн багц: сэдэв бүрээс ээлжлэн нэг нэгээр (вирал, хаяг, спорт, FB пост, ...) 10 пост.
+  // Хүн бүрт ижил постууд, харин дараалал нь хочоор санамсаргүй.
+  function dailyIds(day) {
+    const groups = {};
+    window.POSTS.forEach(p => { const g = p.topic || 'fb'; (groups[g] = groups[g] || []).push(p.id); });
+    const lists = shuffle(Object.keys(groups).sort(), hash('day|' + day)).map(k => {
+      const l = shuffle(groups[k], hash(k)), off = (day * 2) % l.length;
+      return l.slice(off).concat(l.slice(0, off));
+    });
+    const out = [];
+    for (let r = 0; out.length < PER_DAY && r < 99; r++) {
+      lists.forEach(l => { if (out.length < PER_DAY && r < l.length) out.push(l[r]); });
+    }
+    return out;
+  }
   function newGame(set, practice) {
     const p = player() || { nick: '' };
-    const ids = window.POSTS.filter(x => x.set === set).map(x => x.id);
     return {
       date: todayKey(), set, practice: !!practice,
-      ids: shuffle(ids, hash(p.nick + '|' + set)).slice(0, PER_DAY),
+      ids: shuffle(dailyIds(set), hash(p.nick + '|' + set)),
       answers: []
     };
   }
@@ -225,14 +239,14 @@ window.Game = (function () {
   function shareText(game) {
     const s = score(game);
     const url = /^https?:$/.test(location.protocol) ? ' ' + location.origin + location.pathname : '';
-    const title = game.cat ? catName(game.cat) : 'Өдрийн 5 №' + edition();
+    const title = game.cat ? catName(game.cat) : 'Өдрийн 10 №' + edition();
     return 'Swipe Smart · ' + title + ' · ' + s.correct + '/' + s.total + ' 🔥' + s.best + '\n' +
       s.marks.map(m => DOT[m]).join('') + '\n' +
       'Чи хэд авах вэ?' + url;
   }
 
   return {
-    DOT, pad, edition, sets, todaySet, todayKey, msToMidnight, msToMonday, hash,
+    DOT, PER_DAY, pad, edition, todaySet, todayKey, msToMidnight, msToMonday, hash,
     player, defaultNick, savePlayer, setIdentity, setHidden,
     post, truth, judge, newGame, current, saveCurrent, score, mistakes, finish,
     cats, boardCats, catName, newCatGame, xp, level, stats,

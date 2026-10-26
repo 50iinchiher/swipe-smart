@@ -1,4 +1,4 @@
-// Router ба эхлүүлэх. ?reset=1 бүгдийг цэвэрлэнэ, ?set=N тухайн багцыг анхны оролдлогоор тоглуулна.
+// Router ба эхлүүлэх. ?reset=1 бүгдийг цэвэрлэнэ, ?set=N нь N дэх өдрийн 10 постыг анхны оролдлогоор тоглуулна.
 (function () {
   'use strict';
 
@@ -11,7 +11,7 @@
   const q = new URLSearchParams(location.search);
   if (q.get('reset')) Store.clear();
   let forcedSet = parseInt(q.get('set'), 10) || 0;
-  if (forcedSet < 1 || forcedSet > Game.sets()) forcedSet = 0;
+  if (forcedSet < 1) forcedSet = 0;
   if (q.has('reset') || q.has('set')) {
     try { history.replaceState(null, '', location.pathname + location.hash); } catch (e) { /* file:// дээр болохгүй байж болно */ }
   }

@@ -235,7 +235,7 @@ mark{background:#F7B73355;color:inherit;padding:0 2px;border-radius:4px;box-shad
 .big .muted{font-size:48px}
 .big.anim{animation:bigin .6s cubic-bezier(.2,1.5,.4,1) both}
 @keyframes bigin{from{opacity:0;transform:scale(.6)}}
-.dots{font-size:30px;letter-spacing:4px}
+.dots{font-size:24px;letter-spacing:2px;white-space:nowrap}
 .dots span{display:inline-block}
 .dots.anim span{animation:dotin .45s cubic-bezier(.2,1.6,.4,1) both}
 @keyframes dotin{from{opacity:0;transform:scale(.3)}}
@@ -477,3 +477,32 @@ mark{background:#F7B73355;color:inherit;padding:0 2px;border-radius:4px;box-shad
 .spill.bad{color:var(--false);border-color:#6b2a2a}
 .spill.bump{animation:bump .45s cubic-bezier(.2,1.6,.4,1)}
 @keyframes bump{40%{transform:scale(1.25)}}
+
+/* ---------- "Үнэн үү, худал уу" карт (claims.js) ---------- */
+.claim{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:20px;padding:26px 24px 22px;overflow:hidden;
+  background:linear-gradient(180deg,#22201D,#181715);border:1px solid #34312c;border-radius:var(--radius);box-shadow:var(--shadow);
+  user-select:none;-webkit-user-select:none;--tc:#5AA9FF;--tb:#13243a}
+.face.front > .claim{position:absolute;inset:0;justify-content:center}
+.claim.t-viral{--tc:#FF8A4C;--tb:#3a1d10}
+.claim.t-link{--tc:#5AA9FF;--tb:#13243a}
+.claim.t-scam{--tc:#F26B6B;--tb:#3a1414}
+.claim.t-eye{--tc:#C084FC;--tb:#2a1838}
+.claim.t-myth{--tc:#F7B733;--tb:#3a2a10}
+.claim.t-sport{--tc:#4ADE80;--tb:#12301d}
+.claim.t-mongolia{--tc:#38BDF8;--tb:#0f2a38}
+.ctag{position:absolute;top:22px;left:22px;display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:999px;
+  background:var(--tb);color:var(--tc);font-family:var(--display);font-size:15px;font-weight:900}
+.ctag .i{width:17px;height:17px;stroke-width:2.4}
+.ctext{font-family:var(--display);font-size:25px;font-weight:900;line-height:1.3;color:var(--ink)}
+.ctext.long{font-size:21px}
+.cshow{align-self:stretch;padding:24px 14px;border:1.5px dashed #47433c;border-radius:20px;text-align:center;white-space:pre-line;overflow-wrap:anywhere;
+  font-family:var(--display);font-size:30px;font-weight:800;line-height:1.3;color:#fff}
+.cshow.long{font-size:22px}
+.chint{position:absolute;left:0;right:0;bottom:20px;text-align:center;font-size:14px;font-weight:700;color:var(--muted)}
+.claim.mini{flex-shrink:0;gap:14px;padding:18px}
+.claim.mini .ctag{position:static;padding:6px 12px;font-size:13px}
+.claim.mini .ctext{font-size:19px}
+.claim.mini .cshow{font-size:22px;padding:14px 10px}
+.claim.mini .cshow.long{font-size:17px}
+.why a{color:var(--accent);font-weight:700;text-decoration:none;overflow-wrap:anywhere}
+.tipbox{background:var(--true-bg);border:1px solid #1f6b3e;border-radius:18px;padding:13px 14px;font-size:14px;line-height:1.5;color:#CFF5DD}

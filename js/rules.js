@@ -2,27 +2,27 @@
 window.RULES = (function () {
   'use strict';
 
-  // need: нээгдэх XP. pool: постын id-ууд (эсвэл posts.js-ийн cat талбараар)
-  // board: тусдаа чансаатай 3 ангилал
+  // need: нээгдэх XP. board: тусдаа чансаатай 3 ангилал.
+  // Пул: topics (claims.js-ийн topic) + tag (posts.js-ийн cat) + ids + fbTop (хамгийн их хуваалцсан FB пост)
   const CATS = [
-    { id: 'trend',  name: 'Трэнд',       icon: 'flame',  board: true },
-    { id: 'tech',   name: 'Тек',         icon: 'cpu',    board: true, ids: ['p04', 'p06', 'p10', 'p11', 'p12', 'p14', 'p20'] },
-    { id: 'sport',  name: 'Спорт',       icon: 'ball',   board: true, tag: 'sport' },
-    { id: 'scam',   name: 'Луйвар',      icon: 'shield', need: 1000, ids: ['p01', 'p11', 'p13', 'p06', 'p17', 's02'] },
-    { id: 'health', name: 'Эрүүл мэнд',  icon: 'heart',  need: 2000, ids: ['p07', 'p17', 'p03', 'p02', 'p05'] },
-    { id: 'nature', name: 'Байгаль',     icon: 'leaf',   need: 3000, ids: ['p02', 'p03', 'p08', 'p16', 'p15'] }
+    { id: 'trend', name: 'Трэнд',       icon: 'flame',  board: true, topics: ['viral'], fbTop: 4 },
+    { id: 'tech',  name: 'Тек',         icon: 'cpu',    board: true, topics: ['link'] },
+    { id: 'sport', name: 'Спорт',       icon: 'ball',   board: true, topics: ['sport'], tag: 'sport' },
+    { id: 'scam',  name: 'Луйвар',      icon: 'shield', need: 1000, topics: ['scam'], ids: ['p01', 'p11', 'p13', 'p06', 'p17', 's02'] },
+    { id: 'eye',   name: 'Нүдний заль', icon: 'eye',    need: 2000, topics: ['eye'] },
+    { id: 'facts', name: 'Баримт',      icon: 'book',   need: 3000, topics: ['myth', 'mongolia'] }
   ];
-  const PER_GAME = 5;
+  const PER_GAME = 10;
 
   function catPool(posts, c) {
-    if (c.id === 'trend') {
-      // Хамгийн их хуваалцсан 8 пост
-      return posts.filter(p => p.set >= 1).slice().sort((a, b) => b.shares - a.shares).slice(0, 8).map(p => p.id);
-    }
-    if (c.tag) return posts.filter(p => p.cat === c.tag).map(p => p.id);
-    const ok = {};
-    posts.forEach(p => { ok[p.id] = true; });
-    return c.ids.filter(id => ok[id]);
+    const out = [], has = {};
+    const add = p => { if (p && !has[p.id]) { has[p.id] = true; out.push(p.id); } };
+    const byId = {};
+    posts.forEach(p => { byId[p.id] = p; });
+    posts.forEach(p => { if ((c.topics && c.topics.indexOf(p.topic) >= 0) || (c.tag && p.cat === c.tag)) add(p); });
+    (c.ids || []).forEach(id => add(byId[id]));
+    if (c.fbTop) posts.filter(p => p.set >= 1).slice().sort((a, b) => b.shares - a.shares).slice(0, c.fbTop).forEach(add);
+    return out;
   }
 
   function truth(p) { return p.answer === 'unverified' ? 'unsure' : p.answer; }
@@ -43,7 +43,7 @@ window.RULES = (function () {
       marks.push(r);
       if (r === 'ok') {
         pts += 10; correct++; run++;
-        if (run === 3) pts += 5;
+        if (run % 3 === 0) pts += 5;    // 3, 6, 9 дараалан зөв бүрд
         if (run > best) best = run;
       } else if (r === 'meh') {
         pts += 2;                       // streak тасрахгүй, нэмэгдэхгүй

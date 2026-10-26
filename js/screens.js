@@ -51,8 +51,30 @@ window.Screens = (function () {
     return '<div class="img ' + esc(img.kind) + '">' + extra + cap + '</div>';
   }
 
+  // "Үнэн үү, худал уу" карт (claims.js): сэдвийн шошго, мэдэгдэл, хүсвэл тасархай хүрээтэй бичээс
+  const TOPIC = {
+    viral: ['Вирал', 'flame'], link: ['Хаяг', 'link'], scam: ['Луйвар', 'shield'], eye: ['Нүдний заль', 'eye'],
+    myth: ['Домог', 'book'], sport: ['Спорт', 'ball'], mongolia: ['Монгол', 'flag']
+  };
+  function claim(p, opts) {
+    const t = TOPIC[p.topic] || ['', 'search'];
+    const show = p.show ? '<div class="cshow' + (p.show.replace(/\s/g, '').length > 16 ? ' long' : '') + '">' + esc(p.show) + '</div>' : '';
+    return '<article class="claim t-' + esc(p.topic) + (opts.mini ? ' mini' : '') + '">' +
+      '<span class="ctag">' + icon(t[1]) + esc(t[0]) + '</span>' +
+      '<p class="ctext' + (p.text.length > 100 ? ' long' : '') + '">' + esc(p.text) + '</p>' + show +
+      (opts.mini ? '' : '<small class="chint">Картыг чирж хариулаарай</small>') +
+      '</article>';
+  }
+
+  // Зөвхөн http(s) холбоос
+  function extLink(url, label) {
+    if (!/^https?:\/\//.test(url || '')) return esc(label);
+    return '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + ' ↗</a>';
+  }
+
   function post(p, opts) {
     opts = opts || {};
+    if (p.kind === 'claim') return claim(p, opts);
     const pg = p.page;
     return '' +
       '<article class="post' + (p.image ? '' : ' noimg') + (opts.mini ? ' mini' : '') + '">' +
@@ -152,6 +174,10 @@ window.Screens = (function () {
     chevL: '<path d="m15 18-6-6 6-6"/>',
     chevU: '<path d="m18 15-6-6-6 6"/>',
     x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+    eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
+    book: '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
+    flag: '<path d="M4 22V4a1 1 0 0 1 .4-.8A6 6 0 0 1 8 2c3 0 5 2 7.333 2q2 0 3.067-.8A1 1 0 0 1 20 4v10a1 1 0 0 1-.4.8A6 6 0 0 1 16 16c-3 0-5-2-8-2a6 6 0 0 0-4 1.528"/>',
     star: '<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" fill="currentColor"/>',
     clock: '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>',
     pencil: '<path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/>',
@@ -299,7 +325,7 @@ window.Screens = (function () {
     const streak = Game.dayStreak();
     const tips = Object.keys(window.TECHNIQUES).filter(k => window.TECHNIQUES[k].label.indexOf('🏷') === 0)
       .map(k => window.TECHNIQUES[k].tip).sort(() => Math.random() - 0.5).slice(0, 3);
-    const lines = [played ? 'Өнөөдрийн 5 дууссан · Маргааш шинэ 5 пост' : 'Өдрийн 5 · №' + Game.edition() + ' бэлэн — дарж тогло']
+    const lines = [played ? 'Өнөөдрийн 10 дууссан · Маргааш шинэ 10 пост' : 'Өдрийн 10 · №' + Game.edition() + ' бэлэн — дарж тогло']
       .concat(streak ? ['🔥 ' + streak + ' өдөр дараалан'] : []).concat(tips);
     const run = lines.map(l => '<span>' + esc(l) + '</span><i></i>').join('');
 
@@ -335,7 +361,7 @@ window.Screens = (function () {
 
     function menu() {
       const s = sheet(root, `
-        <b class="sh-t">Өдрийн 5 · №${Game.edition()}</b>
+        <b class="sh-t">Өдрийн 10 · №${Game.edition()}</b>
         <button class="btn acc" data-m="play">${icon('play')} ${played ? 'Дадлага хийх' : 'Өнөөдрийн 5'}</button>
         ${played ? '<button class="btn ghost" data-m="today">Өнөөдрийн дүн</button>' : ''}
         <button class="btn ghost" data-m="how">Яаж тоглох вэ?</button>
@@ -383,7 +409,7 @@ window.Screens = (function () {
   function play(root, nav, data) {
     const game = data.game;
     const posts = game.ids.map(Game.post);
-    const title = (game.cat ? Game.catName(game.cat) : 'Өдрийн 5') + (game.practice ? ' · Дадлага' : '');
+    const title = (game.cat ? Game.catName(game.cat) : 'Өдрийн 10') + (game.practice ? ' · Дадлага' : '');
     root.innerHTML = `
       <section class="screen play">
         <div class="top">
@@ -546,7 +572,7 @@ window.Screens = (function () {
           ${tag(game)}
         </div>
         <div class="pad endmain">
-          <div class="muted cap">${game.cat ? esc(Game.catName(game.cat)) : 'Өдрийн 5 · №' + Game.edition()}</div>
+          <div class="muted cap">${game.cat ? esc(Game.catName(game.cat)) : 'Өдрийн 10 · №' + Game.edition()}</div>
           <div class="big${fresh ? ' anim' : ''}">${s.correct}<span class="muted">/${s.total}</span></div>
           <div class="dots${fresh ? ' anim' : ''}">${s.marks.map((m, k) => '<span style="animation-delay:' + (0.25 + k * 0.12) + 's">' + Game.DOT[m] + '</span>').join('')}</div>
           <div class="stat3">
@@ -610,7 +636,9 @@ window.Screens = (function () {
           </div>
           ${post(p, { highlight: true, mini: true })}
           ${tech ? '<span class="pill tech">' + esc(tech.label) + '</span>' : ''}
-          <div class="why">${esc(p.why)}<div class="src">Шалгасан: ${esc(p.source)}</div></div>
+          <div class="why">${esc(p.why)}<div class="src">Шалгасан: ${extLink(p.link, p.source)}</div>
+            ${p.media ? '<div class="src">Зураг/бичлэг: ' + extLink(p.mediaLink, p.media) + '</div>' : ''}</div>
+          ${p.tip ? '<div class="tipbox">🛡 ' + esc(p.tip) + '</div>' : ''}
         </div>`;
     }).join('');
 
@@ -738,7 +766,11 @@ window.Screens = (function () {
   }
 
   // ================================================== 7 · Профайл (Миний ахиц)
-  const SKILLS = { scam: '💸', oldphoto: '🖼', rumor: '🗣', halftruth: '½', urgent: '⏰', deepfake: '🎭', impersonation: '🪪', pseudoscience: '🧪' };
+  const SKILLS = {
+    letters: '🔤', domain: '🌐', ai: '🤖', oldvideo: '🎞', source: '🔎', code: '🔐', channel: '📞', ask: '💰',
+    hurry: '⏱', read: '👀', slow: '🐢', myth: '🧐', update: '🔄', detail: '🔍',
+    scam: '💸', oldphoto: '🖼', rumor: '🗣', halftruth: '½', urgent: '⏰', deepfake: '🎭', impersonation: '🪪', pseudoscience: '🧪'
+  };
 
   function profile(root, nav) {
     function draw() {
