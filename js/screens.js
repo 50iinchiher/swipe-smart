@@ -487,7 +487,7 @@ window.Screens = (function () {
       wait();
     }
 
-    // Хариулсан даруйд авсан оноог (+10, +2, 0) том тэмдгээр, дээд буланд нийт оноог харуулна
+    // Хариулсан даруйд авсан оноог (+10, +15, −5, 0) том тэмдгээр, дээд буланд нийт оноог харуулна
     const ptsEl = $(root, '[data-pts]'), pill = $(root, '.spill');
     const FX = { ok: 'Зөв', meh: 'Эргэлзээтэй', bad: 'Буруу' };
     // st: rules.js-ийн score().steps-ийн сүүлийн алхам { r, d, run }
@@ -503,7 +503,13 @@ window.Screens = (function () {
       el.className = 'fx ' + r;
       el.innerHTML = '<b>' + big + '</b><span>' + sub + '</span>' +
         (perfect ? '<em>🎉 Бүгд зөв · +' + P.perfect + '</em>' : '');
-      $(root, '.screen').appendChild(el);
+      // Дэлгэц бүхэлдээ: оноо нэмэгдвэл ногоон, буруу бол цайвар улаан, эргэлзээтэй бол шар анивчина
+      const wash = document.createElement('div');
+      wash.className = 'wash ' + (r === 'bad' ? 'loss' : st.d > 0 ? 'gain' : 'even');
+      const scr = $(root, '.screen');
+      scr.appendChild(wash);
+      scr.appendChild(el);
+      setTimeout(() => wash.remove(), 900);
       setTimeout(() => el.remove(), 1100);
       pill.className = 'spill ' + r;
       void pill.offsetWidth;
