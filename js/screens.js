@@ -11,20 +11,9 @@ window.Screens = (function () {
     true: { icon: '✓', label: 'Үнэн', cls: 't' },
     unsure: { icon: '?', label: 'Эргэлзээтэй', cls: 'u' }
   };
-  const BTNS =
-    '<button class="rb f" data-ans="false" aria-label="Худал">✕</button>' +
-    '<button class="rb u" data-ans="unsure" aria-label="Эргэлзээтэй">?</button>' +
-    '<button class="rb t" data-ans="true" aria-label="Үнэн">✓</button>';
-
-  // ================================================== Facebook пост карт
-  // 1100 → "1.1K" (реакцийн мөртэй ижил хэв маяг)
-  function fmtCount(n) {
-    if (n >= 1000) return String(Math.round(n / 100) / 10).replace(/\.0$/, '') + 'K';
-    return String(n);
-  }
-
-  // Текстийг escape хийж, хүсвэл highlight хэсгийг <mark>-аар тодруулна
-  function postText(p, withMark) {
+  // ================================================== Карт (data/cards.js)
+  // Текстийг escape хийж, хүсвэл highlight хэсгийг <mark>-аар шараар тодруулна
+  function cardText(p, withMark) {
     const text = esc(p.text);
     if (!withMark || !p.highlight) return text;
     const hl = esc(p.highlight);
@@ -33,64 +22,21 @@ window.Screens = (function () {
     return text.slice(0, i) + '<mark>' + hl + '</mark>' + text.slice(i + hl.length);
   }
 
-  // "299,000₮ → 29,900₮" гэсэн caption-оос хямдралын хувийг гаргана
-  function saleBadge(caption) {
-    const m = /([\d,]+)₮\s*→\s*([\d,]+)₮/.exec(caption || '');
-    if (!m) return '';
-    const from = +m[1].replace(/,/g, ''), to = +m[2].replace(/,/g, '');
-    if (!(from > to)) return '';
-    return '<span class="sale">−' + Math.round((1 - to / from) * 100) + '%</span>';
-  }
-
-  function postImage(img) {
-    if (!img) return '';
-    let extra = '';
-    if (img.kind === 'product') extra = saleBadge(img.caption);
-    if (img.kind === 'video') extra = '<span class="play">▶</span>';
-    const cap = img.caption ? '<span class="capt">' + esc(img.caption) + '</span>' : '';
-    return '<div class="img ' + esc(img.kind) + '">' + extra + cap + '</div>';
-  }
-
-  // "Үнэн үү, худал уу" карт (claims.js): сэдвийн шошго, мэдэгдэл, хүсвэл тасархай хүрээтэй бичээс
-  const TOPIC = {
-    viral: ['Вирал', 'flame'], link: ['Хаяг', 'link'], scam: ['Луйвар', 'shield'], eye: ['Нүдний заль', 'eye'],
-    myth: ['Домог', 'book'], sport: ['Спорт', 'ball'], mongolia: ['Монгол', 'flag']
-  };
-  function claim(p, opts) {
-    const t = TOPIC[p.topic] || ['', 'search'];
-    const show = p.show ? '<div class="cshow' + (p.show.replace(/\s/g, '').length > 16 ? ' long' : '') + '">' + esc(p.show) + '</div>' : '';
-    return '<article class="claim t-' + esc(p.topic) + (opts.mini ? ' mini' : '') + '">' +
-      '<span class="ctag">' + icon(t[1]) + esc(t[0]) + '</span>' +
-      '<p class="ctext' + (p.text.length > 100 ? ' long' : '') + '">' + esc(p.text) + '</p>' + show +
-      (opts.mini ? '' : '<small class="chint">Картыг чирж хариулаарай</small>') +
-      '</article>';
-  }
-
-  // Зөвхөн http(s) холбоос
+  // Зөвхөн http(s) холбоос, шинэ таб дээр
   function extLink(url, label) {
     if (!/^https?:\/\//.test(url || '')) return esc(label);
     return '<a href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + esc(label) + ' ↗</a>';
   }
 
+  // opts.mini: алдааны дүнгийн жижиг хувилбар (highlight-тай, "чирж хариулаарай"-гүй)
   function post(p, opts) {
     opts = opts || {};
-    if (p.kind === 'claim') return claim(p, opts);
-    const pg = p.page;
-    return '' +
-      '<article class="post' + (p.image ? '' : ' noimg') + (opts.mini ? ' mini' : '') + '">' +
-        '<header class="ph">' +
-          '<div class="pav" style="background:' + esc(pg.color) + '">' + esc(pg.ini) + '</div>' +
-          '<div class="pid">' +
-            '<div class="pn">' + esc(pg.name) + (pg.verified ? '<span class="vf" aria-label="Баталгаажсан">✔</span>' : '') + '</div>' +
-            '<div class="pm">' + esc(pg.meta) + '</div>' +
-          '</div>' +
-          '<span class="pmore">···</span>' +
-        '</header>' +
-        '<div class="ptxt">' + postText(p, opts.highlight) + '</div>' +
-        postImage(p.image) +
-        '<div class="react"><span>' + esc(p.reactions) + '</span>' +
-          '<span>' + fmtCount(p.comments) + ' сэтгэгдэл · ' + fmtCount(p.shares) + ' хуваалцсан</span></div>' +
-        '<div class="acts"><span>👍 Таалагдсан</span><span>💬 Сэтгэгдэл</span><span>↗ Хуваалцах</span></div>' +
+    const c = Game.catInfo(p.category);
+    return '<article class="claim t-' + esc(c.id) + (opts.mini ? ' mini' : '') + '">' +
+      '<span class="ctag">' + icon(c.icon) + esc(c.name) + '</span>' +
+      '<p class="ctext' + (p.text.length > 100 ? ' long' : '') + (p.text.length > 180 ? ' xlong' : '') + '">' + cardText(p, opts.mini) + '</p>' +
+      (p.spread ? '<span class="cspread">📅 Тархсан: ' + esc(p.spread) + '</span>' : '') +
+      (opts.mini ? '' : '<small class="chint">Картыг чирж хариулаарай</small>') +
       '</article>';
   }
 
@@ -174,6 +120,7 @@ window.Screens = (function () {
     chevL: '<path d="m15 18-6-6 6-6"/>',
     chevU: '<path d="m18 15-6-6-6 6"/>',
     x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+    tag: '<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1" fill="currentColor"/>',
     link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
     eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
     book: '<path d="M12 7v14"/><path d="M3 18a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h5a4 4 0 0 1 4 4 4 4 0 0 1 4-4h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-6a3 3 0 0 0-3 3 3 3 0 0 0-3-3z"/>',
@@ -186,6 +133,7 @@ window.Screens = (function () {
     wave: '<path d="M2 10v4"/><path d="M6 6v12"/><path d="M10 3v18"/><path d="M14 8v8"/><path d="M18 5v14"/><path d="M22 10v4"/>'
   };
   function icon(name) {
+    if (!ICONS[name]) name = 'tag';
     return '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg>';
   }
 
@@ -320,16 +268,17 @@ window.Screens = (function () {
 
     const rk = Game.ranks();
     const cats = Game.cats().map(c => c.locked
-      ? '<button class="cat lock" data-need="' + c.need + '">' + icon('lock') + '<span>' + c.need + ' XP</span></button>'
+      ? '<button class="cat lock" data-need="' + c.need + '" data-name="' + esc(c.name) + '">' + icon('lock') +
+          '<span>' + esc(c.name) + '</span><small>' + c.need + ' XP</small></button>'
       : '<button class="cat' + (c.played ? ' done' : ' new') + '" data-cat="' + c.id + '">' + icon(c.icon) + '<span>' + esc(c.name) + '</span>' +
           (c.board ? '<em data-rank="' + c.id + '">' + (rk[c.id] && rk[c.id].rank ? '#' + rk[c.id].rank : '') + '</em>' : '') + '</button>'
     ).join('');
 
-    // Мэдээний мөр (гүйдэг): өдрийн 5, дараалсан өдөр, сануулгууд
+    // Мэдээний мөр (гүйдэг): өдрийн 10, дараалсан өдөр, картуудын 🛡 зөвлөгөөнүүд
     const streak = Game.dayStreak();
-    const tips = Object.keys(window.TECHNIQUES).filter(k => window.TECHNIQUES[k].label.indexOf('🏷') === 0)
-      .map(k => window.TECHNIQUES[k].tip).sort(() => Math.random() - 0.5).slice(0, 3);
-    const lines = [played ? 'Өнөөдрийн 10 дууссан · Маргааш шинэ 10 пост' : 'Өдрийн 10 · №' + Game.edition() + ' бэлэн — дарж тогло']
+    const tips = (window.CARDS || []).map(c => c.tip).filter(Boolean)
+      .filter((t, k, a) => a.indexOf(t) === k).sort(() => Math.random() - 0.5).slice(0, 3);
+    const lines = [played ? 'Өнөөдрийн 10 дууссан · Маргааш шинэ 10 карт' : 'Өдрийн 10 · №' + Game.edition() + ' бэлэн — дарж тогло']
       .concat(streak ? ['🔥 ' + streak + ' өдөр дараалан'] : []).concat(tips);
     const run = lines.map(l => '<span>' + esc(l) + '</span><i></i>').join('');
 
@@ -337,7 +286,7 @@ window.Screens = (function () {
       <section class="screen home">
         <div class="top hometop">
           <button class="news" data-act="news">
-            <span class="nw-l"><i></i>ӨДРИЙН 5</span>
+            <span class="nw-l"><i></i>ӨДРИЙН 10</span>
             <span class="nw-t"><span class="mq">${run}${run}</span></span>
           </button>
           <button class="sq" data-act="menu" aria-label="Цэс">${icon('menu')}</button>
@@ -383,7 +332,7 @@ window.Screens = (function () {
       const c = e.target.closest('[data-cat]');
       if (c) { nav.startCat(c.dataset.cat); return; }
       const l = e.target.closest('[data-need]');
-      if (l) { toast('🔒 ' + l.dataset.need + ' XP цуглуулбал нээгдэнэ'); return; }
+      if (l) { toast('🔒 ' + l.dataset.name + ' · ' + l.dataset.need + ' XP цуглуулбал нээгдэнэ'); return; }
       const b = e.target.closest('[data-act]');
       if (!b) return;
       if (b.dataset.act === 'news') { if (played) nav.go('end', { game: Game.todayRecord() }); else nav.start(false); }
@@ -442,7 +391,8 @@ window.Screens = (function () {
         '<div class="flip">' +
           '<div class="face front">' + post(posts[k]) + '</div>' +
           '<div class="face back"><span class="bk-i">' + icon('search') + '</span><div class="bk-l">СЭЖҮҮР</div>' +
-            '<div class="bk-t">' + esc(posts[k].clue) + '</div><div class="bk-h">Дарж буцаана</div></div>' +
+            '<div class="bk-t">' + esc(posts[k].clue || 'Хэн нийтэлсэн бэ? Хэзээ, хаана? Өөр эх сурвалж баталж байна уу?') + '</div>' +
+            '<div class="bk-h">Дарж буцаана</div></div>' +
         '</div>' +
         '<div class="tint"></div>' +
         '<div class="stamp s-false">ХУДАЛ</div><div class="stamp s-true">ҮНЭН</div><div class="stamp s-unsure">ЭРГЭЛЗЭЭТЭЙ</div>';
@@ -642,18 +592,21 @@ window.Screens = (function () {
 
     const slides = items.map(m => {
       const p = m.post, mine = ANS[m.ans], right = ANS[Game.truth(p)];
-      const tech = window.TECHNIQUES[p.technique];
+      const src = p.source || {}, media = p.media || {};
+      const tip = String(p.tip || '').replace(/^🛡\s*/, '');
       return `
         <div class="slide">
           <div class="verdict">
             <span class="pill ${mine.cls}">Чи: ${mine.icon} ${mine.label}</span><span class="muted">→</span>
             <span class="pill ${right.cls}">Зөв нь: ${right.icon} ${right.label}</span>
           </div>
-          ${post(p, { highlight: true, mini: true })}
-          ${tech ? '<span class="pill tech">' + esc(tech.label) + '</span>' : ''}
-          <div class="why">${esc(p.why)}<div class="src">Шалгасан: ${extLink(p.link, p.source)}</div>
-            ${p.media ? '<div class="src">Зураг/бичлэг: ' + extLink(p.mediaLink, p.media) + '</div>' : ''}</div>
-          ${p.tip ? '<div class="tipbox">🛡 ' + esc(p.tip) + '</div>' : ''}
+          ${post(p, { mini: true })}
+          ${p.technique ? '<span class="pill tech">🏷 ' + esc(p.technique) + '</span>' : ''}
+          <div class="why">${esc(p.why)}
+            ${src.name || src.url ? '<div class="src">📎 Шалгасан эх сурвалж: ' + extLink(src.url, src.name || src.url) + '</div>' : ''}
+            ${media.url || media.label ? '<div class="src">🖼 ' + extLink(media.url, media.label || 'Зураг/бичлэг') + '</div>' : ''}
+            ${p.spread ? '<div class="src">📅 Тархсан: ' + esc(p.spread) + '</div>' : ''}</div>
+          ${tip ? '<div class="tipbox">🛡 ' + esc(tip) + '</div>' : ''}
         </div>`;
     }).join('');
 
@@ -696,8 +649,10 @@ window.Screens = (function () {
 
   // ================================================== 6 · Чансаа (Трэнд · Тек · Спорт тус бүр тусдаа)
   function board(root, nav, data) {
+    // Чансаатай (board) бөгөөд карттай ангиллууд л таб болно
     const bc = Game.boardCats();
-    let cat = bc.some(c => c.id === data.cat) ? data.cat : (Store.get('boardCat', '') || bc[0].id);
+    const has = id => bc.some(c => c.id === id);
+    let cat = has(data.cat) ? data.cat : has(Store.get('boardCat', '')) ? Store.get('boardCat', '') : (bc[0] && bc[0].id);
     let period = data.period || 'week';
 
     const ms = Game.msToMonday(), hrs = Math.floor(ms / 36e5);
@@ -710,8 +665,9 @@ window.Screens = (function () {
           <span class="cd">${icon('clock')}${left}</span>
         </div>
         <div class="pad bctl">
-          <div class="seg">${bc.map(c => '<button data-cat="' + c.id + '">' + icon(c.icon) + esc(c.name) + '</button>').join('')}</div>
-          <div class="seg sm"><button data-per="week">Энэ долоо хоног</button><button data-per="all">Бүх цаг</button></div>
+          ${bc.length ? '<div class="seg">' + bc.map(c => '<button data-cat="' + c.id + '">' + icon(c.icon) + esc(c.name) + '</button>').join('') + '</div>' +
+            '<div class="seg sm"><button data-per="week">Энэ долоо хоног</button><button data-per="all">Бүх цаг</button></div>' : ''}
+          <div class="lbnote">📌 «Өдрийн 10» чансаанд тооцогдохгүй. <b>Ангилал тоглож чансаанд орно.</b></div>
         </div>
         <div class="lbscroll"></div>
         <div class="mebar" hidden></div>
@@ -753,6 +709,10 @@ window.Screens = (function () {
 
     let req = 0;
     function draw() {
+      if (!cat) {
+        box.innerHTML = '<div class="lbmsg">Чансаатай ангилалд одоогоор карт алга.</div>';
+        return;
+      }
       root.querySelectorAll('[data-cat]').forEach(b => b.classList.toggle('on', b.dataset.cat === cat));
       root.querySelectorAll('[data-per]').forEach(b => b.classList.toggle('on', b.dataset.per === period));
       const my = ++req;
@@ -781,20 +741,15 @@ window.Screens = (function () {
   }
 
   // ================================================== 7 · Профайл (Миний ахиц)
-  const SKILLS = {
-    letters: '🔤', domain: '🌐', ai: '🤖', oldvideo: '🎞', source: '🔎', code: '🔐', channel: '📞', ask: '💰',
-    hurry: '⏱', read: '👀', slow: '🐢', myth: '🧐', update: '🔄', detail: '🔍',
-    scam: '💸', oldphoto: '🖼', rumor: '🗣', halftruth: '½', urgent: '⏰', deepfake: '🎭', impersonation: '🪪', pseudoscience: '🧪'
-  };
-
   function profile(root, nav) {
     function draw() {
       const p = Game.player() || { nick: '', cls: '' };
       const x = Game.xp(), lv = Game.level(), st = Game.stats();
-      const skills = Object.keys(SKILLS).filter(k => window.TECHNIQUES[k]).map(k => {
+      // Чадварууд = cards.js-ийн technique бүр; нэг ч удаа зөв таньсан бол нээгдэнэ
+      const skills = Game.techniques().map(k => {
         const t = st.tech[k] || { ok: 0, n: 0 }, on = t.ok > 0;
-        return '<div class="sk' + (on ? ' on' : '') + '"><span class="skc">' + (on ? SKILLS[k] : icon('lock')) + '</span>' +
-          '<b>' + esc(window.TECHNIQUES[k].label.replace(/^\S+\s/, '')) + '</b><small>' + (t.n ? t.ok + '/' + t.n + ' зөв' : '—') + '</small></div>';
+        return '<div class="sk' + (on ? ' on' : '') + '"><span class="skc">' + (on ? esc(k.trim().charAt(0).toUpperCase()) : icon('lock')) + '</span>' +
+          '<b>' + esc(k) + '</b><small>' + (t.n ? t.ok + '/' + t.n + ' зөв' : '—') + '</small></div>';
       }).join('');
 
       root.innerHTML = `

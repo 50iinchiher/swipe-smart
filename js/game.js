@@ -7,10 +7,12 @@ window.Game = (function () {
   const PER_DAY = window.RULES.PER_GAME;
   const DOT = { ok: '🟩', meh: '🟨', bad: '🟥' };
 
-  const R = window.RULES, CATS = R.CATS;
+  const R = window.RULES, CARDS = window.CARDS || [];
+  // Ангиллууд cards.js-д байгаа category-уудаас (карттай нь л)
+  const CATS = R.categories(CARDS, window.CATEGORIES);
 
   const byId = {};
-  (window.POSTS || []).forEach(p => { byId[p.id] = p; });
+  CARDS.forEach(p => { byId[p.id] = p; });
 
   // ---------- Огноо ----------
   function pad(n) { return (n < 10 ? '0' : '') + n; }
@@ -74,11 +76,14 @@ window.Game = (function () {
   function post(id) { return byId[id]; }
   const truth = R.truth, judge = R.judge;
 
-  // Өдрийн багц: сэдэв бүрээс ээлжлэн нэг нэгээр (вирал, хаяг, спорт, FB пост, ...) 10 пост.
-  // Хүн бүрт ижил постууд, харин дараалал нь хочоор санамсаргүй.
+  // Хадгалсан тоглолтын бүх карт cards.js-д байгаа эсэх (карт сольсны дараа хуучин тоглолтыг хаяна)
+  function valid(game) { return !!(game && game.ids && game.ids.length && game.ids.every(id => byId[id])); }
+
+  // Өдрийн багц: ангилал бүрээс ээлжлэн нэг нэгээр 10 карт (карт цөөн бол байгаа нь бүгд).
+  // Хүн бүрт ижил картууд, харин дараалал нь хочоор санамсаргүй.
   function dailyIds(day) {
     const groups = {};
-    window.POSTS.forEach(p => { const g = p.topic || 'fb'; (groups[g] = groups[g] || []).push(p.id); });
+    CARDS.forEach(p => { (groups[p.category] = groups[p.category] || []).push(p.id); });
     const lists = shuffle(Object.keys(groups).sort(), hash('day|' + day)).map(k => {
       const l = shuffle(groups[k], hash(k)), off = (day * 2) % l.length;
       return l.slice(off).concat(l.slice(0, off));
@@ -99,7 +104,7 @@ window.Game = (function () {
   }
 
   // ---------- Ангилал ----------
-  function catPool(c) { return R.catPool(window.POSTS, c); }
+  function catPool(c) { return R.catPool(CARDS, c.id); }
   // Ангилал бүрт өдрийн анхны тоглолт л тооцогдоно (чансаа, XP). Дахин тоглох = дадлага.
   // catLog: { 'YYYY-MM-DD': { trend: { ids, answers, pts, correct } } }
   function catLog() { return Store.get('catLog', {}); }
@@ -109,18 +114,19 @@ window.Game = (function () {
     return CATS.map(c => Object.assign({}, c, { locked: (c.need || 0) > x, played: catPlayedToday(c.id) }));
   }
   function boardCats() { return CATS.filter(c => c.board); }
-  function catName(id) { const c = CATS.find(x => x.id === id); return c ? c.name : ''; }
+  function catInfo(id) { return CATS.find(x => x.id === id) || { id, name: id || '', icon: 'tag' }; }
+  function catName(id) { return catInfo(id).name; }
   function newCatGame(id) {
     const c = CATS.find(x => x.id === id), today = todayKey();
     const cur = Store.get('catCur', {})[id];
-    if (cur && cur.date === today && cur.answers.length < cur.ids.length) return cur;
+    if (cur && cur.date === today && valid(cur) && cur.answers.length < cur.ids.length) return cur;
     const practice = catPlayedToday(id);
     const p = player() || { nick: '' };
     const seed = practice ? (Math.random() * 4294967296) >>> 0 : hash(p.nick + '|' + id + '|' + today);
     return { date: today, cat: id, set: 0, practice, ids: shuffle(catPool(c), seed).slice(0, PER_DAY), answers: [] };
   }
 
-  // Бүх албан тоглолт (өдрийн 5 + ангилал)
+  // Бүх албан тоглолт (өдрийн 10 + ангилал)
   function plays() {
     const h = history(), L = catLog(), out = [];
     Object.keys(h).forEach(d => out.push(h[d]));
@@ -227,12 +233,17 @@ window.Game = (function () {
   function weakness(extra) {
     const games = plays();
     if (extra && extra.practice) games.push(extra);
-    const cnt = {};
-    games.forEach(g => mistakes(g).forEach(m => { cnt[m.post.technique] = (cnt[m.post.technique] || 0) + 1; }));
+    const cnt = {}, tip = {};
+    games.forEach(g => mistakes(g).forEach(m => {
+      const t = m.post.technique;
+      if (!t) return;
+      cnt[t] = (cnt[t] || 0) + 1;
+      if (m.post.tip) tip[t] = m.post.tip;
+    }));
     let top = null;
-    Object.keys(cnt).forEach(k => { if (window.TECHNIQUES[k] && (!top || cnt[k] > cnt[top])) top = k; });
+    Object.keys(cnt).forEach(k => { if (!top || cnt[k] > cnt[top]) top = k; });
     if (!top) return null;
-    return { label: window.TECHNIQUES[top].label.replace(/^\S+\s/, ''), tip: window.TECHNIQUES[top].tip, count: cnt[top] };
+    return { label: top, tip: tip[top] || '', count: cnt[top] };
   }
 
   // Хариултыг ил гаргахгүй хуваалцах мөр
@@ -245,11 +256,18 @@ window.Game = (function () {
       'Чи хэд авах вэ?' + url;
   }
 
+  // Профайлын "Чадварууд": cards.js-д байгаа бүх technique (давтагдашгүй, анх гарсан дарааллаар)
+  function techniques() {
+    const out = [];
+    CARDS.forEach(c => { if (c.technique && out.indexOf(c.technique) < 0) out.push(c.technique); });
+    return out;
+  }
+
   return {
     DOT, PER_DAY, pad, edition, todaySet, todayKey, msToMidnight, msToMonday, hash,
     player, defaultNick, savePlayer, setIdentity, setHidden,
-    post, truth, judge, newGame, current, saveCurrent, score, mistakes, finish,
-    cats, boardCats, catName, newCatGame, xp, level, stats,
+    post, valid, techniques, truth, judge, newGame, current, saveCurrent, score, mistakes, finish,
+    cats, boardCats, catInfo, catName, newCatGame, xp, level, stats,
     todayRecord, playedToday, dayStreak, ranks, refreshRanks, weakness, shareText
   };
 })();

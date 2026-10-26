@@ -4,20 +4,21 @@
 //   POST /api/submit    { cat, ids, answers }      → { pts, correct, rank, total }
 //   GET  /api/board?cat=tech&period=week|all       → { rows, me, total }
 //   GET  /api/ranks                                → { trend: { rank, score, total }, ... }
-// Оноог сервер posts.js-ээс өөрөө тооцно. Ангилал бүрт өдөрт нэг л тоглолт тооцогдоно.
+// Оноог сервер data/cards.js-ээс өөрөө тооцно. Ангилал бүрт өдөрт нэг л тоглолт тооцогдоно.
 import { getStore } from '@netlify/blobs';
 import { createHash, randomBytes, randomUUID } from 'node:crypto';
 
-// posts.js, claims.js, rules.js нь window.* тодорхойлдог браузерын скрипт. esbuild функцтэй хамт багцална.
+// cards.js, categories.js, rules.js нь window.* тодорхойлдог браузерын скрипт. esbuild функцтэй хамт багцална.
 globalThis.window = globalThis.window || {};
 let season = '';   // 's2/' гэх мэт: чансаа, тоглолтын түлхүүрийн угтвар (rules.js-ийн SEASON)
-const ready = import('../../data/posts.js').then(() => import('../../data/claims.js')).then(() => import('../../js/rules.js')).then(() => {
-  const byId = {};
-  window.POSTS.forEach(p => { byId[p.id] = p; });
-  const pools = {};
-  window.RULES.CATS.forEach(c => { pools[c.id] = new Set(window.RULES.catPool(window.POSTS, c)); });
+const ready = import('../../data/cards.js').then(() => import('../../data/categories.js')).then(() => import('../../js/rules.js')).then(() => {
+  const cards = window.CARDS || [], byId = {};
+  window.RULES.validate(cards).forEach(w => console.warn(w));
+  cards.forEach(p => { byId[p.id] = p; });
+  const cats = window.RULES.categories(cards, window.CATEGORIES), pools = {};
+  cats.forEach(c => { pools[c.id] = new Set(window.RULES.catPool(cards, c.id)); });
   season = 's' + window.RULES.SEASON + '/';
-  return { R: window.RULES, byId, pools, boardCats: window.RULES.CATS.filter(c => c.board).map(c => c.id) };
+  return { R: window.RULES, byId, pools, boardCats: cats.filter(c => c.board).map(c => c.id) };
 });
 
 const store = () => getStore({ name: 'swipesmart', consistency: 'strong' });

@@ -1,10 +1,16 @@
-// Router ба эхлүүлэх. ?reset=1 бүгдийг цэвэрлэнэ, ?set=N нь N дэх өдрийн 10 постыг анхны оролдлогоор тоглуулна.
+// Router ба эхлүүлэх. ?reset=1 бүгдийг цэвэрлэнэ, ?set=N нь N дэх өдрийн 10 картыг анхны оролдлогоор тоглуулна.
 (function () {
   'use strict';
 
   const app = document.getElementById('app');
-  if (!window.POSTS || !window.POSTS.length) {
-    app.innerHTML = '<p class="fatal">data/posts.js ачаалагдсангүй.</p>';
+  // cards.js-ийг шалгаж, алдааг консолд анхааруулга болгон гаргана
+  const warns = RULES.validate(window.CARDS);
+  if (warns.length) {
+    console.warn('data/cards.js: ' + warns.length + ' асуудал олдлоо');
+    warns.forEach(w => console.warn(w));
+  }
+  if (!window.CARDS || !window.CARDS.length) {
+    app.innerHTML = '<p class="fatal">data/cards.js-д карт алга. window.CARDS = [ ... ] дотор карт нэмнэ үү.</p>';
     return;
   }
 
@@ -52,7 +58,7 @@
         forcedSet = 0;
       } else {
         const set = Game.todaySet(), cur = Game.current();
-        if (cur && cur.date === Game.todayKey() && cur.set === set && !!cur.practice === !!practice && cur.answers.length < cur.ids.length) {
+        if (cur && cur.date === Game.todayKey() && cur.set === set && !!cur.practice === !!practice && Game.valid(cur) && cur.answers.length < cur.ids.length) {
           game = cur;
         } else {
           game = Game.newGame(set, practice);
