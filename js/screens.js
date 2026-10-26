@@ -389,7 +389,7 @@ window.Screens = (function () {
         <div class="top">
           <button class="sq" data-act="exit" aria-label="Гарах">${icon('x')}</button>
           <div class="prog"><b>${esc(title)} · <span data-n></span>/${posts.length}</b><div class="pbar"><i></i></div></div>
-          <span class="spill">${icon('star')}<b>${Game.xp()}</b></span>
+          <span class="spill">${icon('star')}<b data-pts>${Game.score(game).pts}</b></span>
         </div>
         <div class="deck"></div>
         <div class="btns">
@@ -457,8 +457,30 @@ window.Screens = (function () {
       wait();
     }
 
+    // Хариулсан даруйд авсан оноог (+10, +2, 0) том тэмдгээр, дээд буланд нийт оноог харуулна
+    const ptsEl = $(root, '[data-pts]'), pill = $(root, '.spill');
+    const FX = { ok: 'Зөв', meh: 'Эргэлзээтэй', bad: 'Буруу' };
+    function flash(r, delta, run) {
+      const el = document.createElement('div');
+      el.className = 'fx ' + r;
+      el.innerHTML = '<b>' + (r === 'bad' ? '✗' : '+' + delta) + '</b><span>' + FX[r] +
+        (r === 'bad' ? ' · 0 оноо' : '') + (r === 'ok' && run >= 2 ? ' · 🔥' + run : '') + '</span>';
+      $(root, '.screen').appendChild(el);
+      setTimeout(() => el.remove(), 1100);
+      pill.className = 'spill ' + r;
+      void pill.offsetWidth;
+      pill.classList.add('bump');
+      ptsEl.textContent = Game.score(game).pts;
+      Swipe.buzz(r === 'bad' ? [40, 50, 40] : 15);
+    }
+
     function commit(dir) {
+      const before = Game.score(game);
       game.answers.push({ id: posts[i].id, ans: dir });
+      const after = Game.score(game), r = after.marks[after.marks.length - 1];
+      let run = 0;
+      for (let k = after.marks.length - 1; k >= 0 && after.marks[k] !== 'bad'; k--) if (after.marks[k] === 'ok') run++;
+      flash(r, after.pts - before.pts, run);
       cards[i].remove();
       delete cards[i];
       i++;
@@ -466,7 +488,7 @@ window.Screens = (function () {
       if (i >= posts.length) {
         fill.style.width = '100%';
         Game.finish(game);
-        setTimeout(() => nav.reset('end', { game, fresh: true }), 200);
+        setTimeout(() => nav.reset('end', { game, fresh: true }), 1000);
         return;
       }
       Game.saveCurrent(game);
