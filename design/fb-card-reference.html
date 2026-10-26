@@ -1,5 +1,5 @@
 <!doctype html><html lang="mn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FB карт · загвар</title>
+<title>Картын загвар</title>
 <style>
 :root{--fb-bg:#F0F2F5;--fb-card:#fff;--fb-text:#050505;--fb-muted:#65676B;--fb-line:#E4E6EB;--fb-blue:#1877F2;
 --false:#F43F5E;--true:#10B981;--unsure:#F59E0B}
@@ -31,15 +31,48 @@ mark{background:#FDE68A;padding:0 2px;border-radius:3px}
 .src b{font-size:12px;color:var(--fb-muted);text-transform:uppercase;letter-spacing:.04em}
 .src a{display:block;color:var(--fb-blue);text-decoration:none;padding:6px 0;font-weight:500}
 .src a::after{content:" ↗"}
+/* ---- Messenger / SMS ---- */
+.chat{background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.2);overflow:hidden}
+.chat-head{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--fb-line)}
+.chat-head .fb-av{width:36px;height:36px}
+.chat-sub{font-size:12px;color:var(--fb-muted)}
+.chat-body{padding:12px;display:flex;flex-direction:column;gap:6px;background:#fff}
+.chat-time{align-self:center;font-size:11px;color:var(--fb-muted);margin:2px 0 6px}
+.b{max-width:80%;padding:8px 12px;border-radius:18px;font-size:15px;line-height:1.35;background:#E4E6EB;align-self:flex-start;white-space:pre-wrap}
+.b.me{align-self:flex-end;background:#0084FF;color:#fff}
+.b.sys{align-self:center;background:#FEF9C3;color:#713F12;font-size:13px;border-radius:10px}
+.chat.sms .b.me{background:#34C759}.chat.sms .b{background:#E9E9EB}
+.lnk{align-self:flex-start;max-width:80%;border-radius:14px;overflow:hidden;background:#F0F2F5;border:1px solid var(--fb-line)}
+.lnk img{display:block;width:100%;aspect-ratio:16/10;object-fit:cover}
+.lnk div{padding:8px 10px;font-size:13px}.lnk small{color:var(--fb-muted);display:block}
+/* ---- Email ---- */
+.mail{background:#fff;border-radius:16px;box-shadow:0 1px 2px rgba(0,0,0,.2);padding:14px}
+.mail-subj{font-size:18px;font-weight:600;margin-bottom:10px}
+.mail-from{display:flex;gap:10px;align-items:center;margin-bottom:12px}
+.mail-from .fb-av{width:36px;height:36px}
+.mail-addr{font-size:12px;color:var(--fb-muted)}
+.mail-body{font-size:14.5px;line-height:1.5;color:#202124}
+.mail-btn{display:inline-block;margin-top:12px;background:#1A73E8;color:#fff;padding:9px 16px;border-radius:6px;font-weight:600;font-size:14px}
+.mail-url{font-size:11px;color:var(--fb-muted);margin-top:4px}
 </style></head><body><div class="wrap" id="app"></div>
 <script src="../data/cards.js"></script>
+<script src="../data/cards-spam.js"></script>
 <script>
 const L={true:["✓ Үнэн","var(--true)"],false:["✕ Худал","var(--false)"],unsure:["? Эргэлзээтэй","var(--unsure)"]};
 const esc=s=>s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-function post(c,mark=false){const p=c.post,g=p.page;let t=esc(c.text);if(mark&&c.highlight)t=t.replace(esc(c.highlight),`<mark>${esc(c.highlight)}</mark>`);
+function hl(c,mark){let t=esc(c.text);if(mark&&c.highlight)t=t.replace(esc(c.highlight),`<mark>${esc(c.highlight)}</mark>`);return t}
+function post(c,mark=false){const p=c.post,k=p.kind||"facebook";
+if(k==="messenger"||k==="sms"){const f=p.from;
+ return `<div class="chat ${k}"><div class="chat-head"><div class="fb-av" style="background:${f.color}">${esc(f.ini)}</div><div><div class="fb-name">${esc(f.name)}</div><div class="chat-sub">${k==="sms"?"SMS":(f.active||"Messenger")}</div></div></div>
+ <div class="chat-body"><div class="chat-time">${esc(p.time)}</div>${(p.thread||[]).map(m=>`<div class="b ${m.me?"me":""} ${m.system?"sys":""}">${esc(m.text)}</div>`).join("")}
+ <div class="b">${hl(c,mark)}</div>${p.link?`<div class="lnk">${p.link.image?`<img src="../${p.link.image}" alt="">`:""}<div><b>${esc(p.link.title)}</b><small>${esc(p.link.url)}</small></div></div>`:""}</div></div>`}
+if(k==="email"){return `<div class="mail"><div class="mail-subj">${esc(p.subject)}</div><div class="mail-from"><div class="fb-av" style="background:#5F6368">${esc(p.fromName[0])}</div><div><div class="fb-name">${esc(p.fromName)}</div><div class="mail-addr">&lt;${esc(p.fromEmail)}&gt; · ${esc(p.time)}</div></div></div>
+ <div class="mail-body">${hl(c,mark)}</div>${p.button?`<span class="mail-btn">${esc(p.button.label)}</span><div class="mail-url">${esc(p.button.url)}</div>`:""}</div>`}
+const g=p.page;
 return `<article class="fb"><div class="fb-head"><div class="fb-av" style="background:${g.color}">${g.ini}</div><div><div class="fb-name">${esc(g.name)}${g.verified?'<span class="fb-ver">✓</span>':''}</div>
 <div class="fb-meta">${g.sponsored?'Ивээн тэтгэсэн':p.time} · ${p.privacy}</div></div><div class="fb-dots">···</div></div>
-<div class="fb-text">${t}</div><img class="fb-img" src="../${p.image.src}" alt="${esc(p.image.alt)}">
+<div class="fb-text">${hl(c,mark)}</div><img class="fb-img" src="../${p.image.src}" alt="${esc(p.image.alt)}">
+${p.link?`<div style="background:#F0F2F5;padding:8px 12px;font-size:13px;color:#65676B">${esc(p.link.url.toUpperCase())}<div style="color:#050505;font-weight:600;font-size:15px">${esc(p.link.title)}</div></div>`:""}
 <div class="fb-stats"><div class="fb-rx"><span class="e">${p.reactions.top.map(e=>`<i>${e}</i>`).join('')}</span>${p.reactions.total}</div><div>${p.comments} сэтгэгдэл · ${p.shares} хуваалцсан</div></div>
 <div class="fb-act"><div>👍 Таалагдсан</div><div>💬 Сэтгэгдэл</div><div>↗ Хуваалцах</div></div></article>`}
 function review(c,you="true"){const [a,ac]=L[c.answer],[y,yc]=L[you];

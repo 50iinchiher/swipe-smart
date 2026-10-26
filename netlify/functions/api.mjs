@@ -11,7 +11,7 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 // cards.js, categories.js, rules.js нь window.* тодорхойлдог браузерын скрипт. esbuild функцтэй хамт багцална.
 globalThis.window = globalThis.window || {};
 let season = '';   // 's2/' гэх мэт: чансаа, тоглолтын түлхүүрийн угтвар (rules.js-ийн SEASON)
-const ready = import('../../data/cards.js').then(() => import('../../data/categories.js')).then(() => import('../../js/rules.js')).then(() => {
+const ready = import('../../data/cards.js').then(() => import('../../data/cards-spam.js')).then(() => import('../../data/categories.js')).then(() => import('../../js/rules.js')).then(() => {
   const cards = window.CARDS || [], byId = {};
   window.RULES.validate(cards).forEach(w => console.warn(w));
   cards.forEach(p => { byId[p.id] = p; });

@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750"><defs><radialGradient id="p" cx=".8" cy=".4" r=".6"><stop offset="0" stop-color="#2563eb" stop-opacity=".5"/><stop offset="1" stop-color="#0b2a5b" stop-opacity="0"/></radialGradient></defs><rect width="1200" height="750" fill="#0b2a5b"/><rect width="1200" height="750" fill="url(#p)"/>
+<rect x="60" y="60" width="380" height="64" rx="10" fill="#facc15"/><text x="250" y="104" text-anchor="middle" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="34" font-weight="900" fill="#111">СЭРЭМЖЛҮҮЛЭГ</text>
+<text x="60" y="230" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="58" font-weight="900" fill="#fff">ДАНСАА БУСДАД</text>
+<text x="60" y="310" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="58" font-weight="900" fill="#fff">ТҮРЭЭСЛҮҮЛЭХГҮЙ!</text>
+<text x="60" y="400" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="32" font-weight="600" fill="#bfdbfe">«Дансаараа гүйлгээ хийлгээд мөнгө ав»</text>
+<text x="60" y="450" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="32" font-weight="600" fill="#bfdbfe">гэсэн зар 100% залилан</text>
+<g transform="translate(1040 330) scale(.7)"><circle r="190" fill="#1e40af"/><circle r="150" fill="none" stroke="#facc15" stroke-width="12"/><text y="40" text-anchor="middle" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="140" font-weight="900" fill="#facc15">102</text></g>
+<rect x="0" y="640" width="1200" height="110" fill="#facc15"/><text x="60" y="708" font-family="Inter,Segoe UI,Roboto,Arial,sans-serif" font-size="36" font-weight="800" fill="#111">Залилангийн талаар мэдээлэх: 102</text></svg>

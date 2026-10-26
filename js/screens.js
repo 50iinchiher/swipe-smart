@@ -11,6 +11,9 @@ window.Screens = (function () {
     true: { icon: '✓', label: 'Үнэн', cls: 't' },
     unsure: { icon: '?', label: 'Эргэлзээтэй', cls: 'u' }
   };
+  // Хариултын нэр картын ангиллаас (categories.js labels): spam → Луйвар / Жинхэнэ / Шалгах
+  function ansLabel(cat, a) { return ((Game.catInfo(cat).labels || {})[a]) || ANS[a].label; }
+
   // ================================================== Карт (data/cards.js)
   // Текстийг escape хийж, хүсвэл highlight хэсгийг <mark>-аар шараар тодруулна
   function cardText(p, withMark) {
@@ -42,16 +45,46 @@ window.Screens = (function () {
         '<div class="fb-meta">' + meta + '</div></div><div class="fb-dots">···</div></div>' +
       '<div class="fb-text">' + cardText(p, opts.mini) + '</div>' +
       pic +
+      (fb.link ? '<div class="fb-link"><small>' + esc(String(fb.link.url || '').toUpperCase()) + '</small><b>' + esc(fb.link.title || '') + '</b></div>' : '') +
       '<div class="fb-stats"><div class="fb-rx"><span class="e">' + (re.top || []).map(e => '<i>' + esc(e) + '</i>').join('') + '</span>' + esc(re.total || '') + '</div>' +
         '<div>' + esc(fb.comments || '0') + ' сэтгэгдэл · ' + esc(fb.shares || '0') + ' хуваалцсан</div></div>' +
       '<div class="fb-act" aria-hidden="true"><div>👍 Таалагдсан</div><div>💬 Сэтгэгдэл</div><div>↗ Хуваалцах</div></div>' +
       '</article>';
   }
 
+  // post.kind = messenger | sms: толгой, цаг, thread-ийн бөмбөлгүүд, сүүлд нь c.text, линкний preview (зөвхөн текст)
+  function chatPost(p, opts) {
+    const fb = p.post, f = fb.from || {}, k = fb.kind;
+    const lnk = fb.link ? '<div class="lnk">' + (fb.link.image ? '<img src="' + esc(fb.link.image) + '" alt="" loading="eager" draggable="false">' : '') +
+      '<div><b>' + esc(fb.link.title || '') + '</b><small>' + esc(fb.link.url || '') + '</small></div></div>' : '';
+    return '<div class="chat ' + esc(k) + (opts.mini ? ' mini' : '') + '">' +
+      '<div class="chat-head"><div class="fb-av" style="background:' + esc(f.color || '#64748B') + '">' + esc(f.ini || '?') + '</div>' +
+        '<div><div class="fb-name">' + esc(f.name || '') + '</div><div class="chat-sub">' + (k === 'sms' ? 'SMS' : esc(f.active || 'Messenger')) + '</div></div></div>' +
+      '<div class="chat-body"><div class="chat-time">' + esc(fb.time || '') + '</div>' +
+        (fb.thread || []).map(m => '<div class="b' + (m.me ? ' me' : '') + (m.system ? ' sys' : '') + '">' + esc(m.text) + '</div>').join('') +
+        '<div class="b">' + cardText(p, opts.mini) + '</div>' + lnk + '</div></div>';
+  }
+
+  // post.kind = email: гарчиг, илгээгч <хаяг>, текст, товч + доор нь url (зөвхөн текст)
+  function mailPost(p, opts) {
+    const fb = p.post, name = fb.fromName || '';
+    return '<div class="mail' + (opts.mini ? ' mini' : '') + '"><div class="mail-subj">' + esc(fb.subject || '') + '</div>' +
+      '<div class="mail-from"><div class="fb-av" style="background:#5F6368">' + esc(name.charAt(0)) + '</div>' +
+        '<div><div class="fb-name">' + esc(name) + '</div><div class="mail-addr">&lt;' + esc(fb.fromEmail || '') + '&gt; · ' + esc(fb.time || '') + '</div></div></div>' +
+      '<div class="mail-body">' + cardText(p, opts.mini) + '</div>' +
+      (fb.button ? '<span class="mail-btn">' + esc(fb.button.label || '') + '</span><div class="mail-url">' + esc(fb.button.url || '') + '</div>' : '') +
+      '</div>';
+  }
+
   // opts.mini: алдааны дүнгийн жижиг хувилбар (highlight-тай, "чирж хариулаарай"-гүй)
   function post(p, opts) {
     opts = opts || {};
-    if (p.post) return fbPost(p, opts);
+    if (p.post) {
+      const k = p.post.kind || 'facebook';
+      if (k === 'messenger' || k === 'sms') return chatPost(p, opts);
+      if (k === 'email') return mailPost(p, opts);
+      return fbPost(p, opts);
+    }
     const c = Game.catInfo(p.category);
     return '<article class="claim t-' + esc(c.id) + (opts.mini ? ' mini' : '') + '">' +
       '<span class="ctag">' + icon(c.icon) + esc(c.name) + '</span>' +
@@ -154,6 +187,8 @@ window.Screens = (function () {
     wave: '<path d="M2 10v4"/><path d="M6 6v12"/><path d="M10 3v18"/><path d="M14 8v8"/><path d="M18 5v14"/><path d="M22 10v4"/>'
   };
   function icon(name) {
+    // categories.js-д emoji ("🎣") өгсөн бол түүнийг харуулна
+    if (!ICONS[name] && name && !/^[a-z]+$/.test(name)) return '<span class="i emo" aria-hidden="true">' + esc(name) + '</span>';
     if (!ICONS[name]) name = 'tag';
     return '<svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + ICONS[name] + '</svg>';
   }
@@ -390,7 +425,11 @@ window.Screens = (function () {
     const game = data.game;
     const posts = game.ids.map(Game.post);
     // Тоглоом эхлэхэд бүх зургийг урьдчилан ачаална
-    posts.forEach(p => { if (p && p.post && p.post.image && p.post.image.src) new Image().src = p.post.image.src; });
+    posts.forEach(p => {
+      const fb = p && p.post;
+      if (fb && fb.image && fb.image.src) new Image().src = fb.image.src;
+      if (fb && fb.link && fb.link.image) new Image().src = fb.link.image;
+    });
     const title = (game.cat ? Game.catName(game.cat) : 'Өдрийн 10') + (game.practice ? ' · Дадлага' : '');
     root.innerHTML = `
       <section class="screen play">
@@ -401,9 +440,9 @@ window.Screens = (function () {
         </div>
         <div class="deck"></div>
         <div class="btns">
-          <button class="rb f" data-ans="false">${icon('chevL')}Худал</button>
-          <button class="rb u" data-ans="unsure">${icon('chevU')}Эргэлзээтэй</button>
-          <button class="rb t" data-ans="true">Үнэн${icon('chev')}</button>
+          <button class="rb f" data-ans="false">${icon('chevL')}<span data-l>Худал</span></button>
+          <button class="rb u" data-ans="unsure">${icon('chevU')}<span data-l>Эргэлзээтэй</span></button>
+          <button class="rb t" data-ans="true"><span data-l>Үнэн</span>${icon('chev')}</button>
         </div>
       </section>`;
 
@@ -424,7 +463,7 @@ window.Screens = (function () {
             '<div class="bk-h">Дарж буцаана</div></div>' +
         '</div>' +
         '<div class="tint"></div>' +
-        '<div class="stamp s-false">ХУДАЛ</div><div class="stamp s-true">ҮНЭН</div><div class="stamp s-unsure">ЭРГЭЛЗЭЭТЭЙ</div>';
+        ['false', 'true', 'unsure'].map(a => '<div class="stamp s-' + a + '">' + esc(ansLabel(posts[k].category, a).toUpperCase()) + '</div>').join('');
       return el;
     }
 
@@ -445,12 +484,20 @@ window.Screens = (function () {
 
     function layout() {
       for (let k = i; k < Math.min(i + 3, posts.length); k++) {
-        if (!cards[k]) { cards[k] = makeCard(k); deck.insertBefore(cards[k], deck.firstChild); }
+        if (!cards[k]) {
+          cards[k] = makeCard(k);
+          deck.insertBefore(cards[k], deck.firstChild);
+          // Урт мессеж багтахгүй бол фонт 14px, зай багасна
+          const body = cards[k].querySelector('.chat, .mail');
+          if (body && body.scrollHeight > deck.clientHeight) cards[k].classList.add('tight');
+        }
       }
       void deck.offsetWidth;
       Object.keys(cards).forEach(k => { cards[k].dataset.pos = String(k - i); });
       progress(i);
       const top = cards[i];
+      // Товчны нэр одоогийн картын ангиллаар
+      btns.querySelectorAll('[data-ans]').forEach(b => { $(b, '[data-l]').textContent = ansLabel(posts[i].category, b.dataset.ans); });
       ctl = Swipe.attach(top, {
         canSwipe: () => !locked && !busy && !coach,
         onTap: () => top.classList.toggle('flipped'),
@@ -631,8 +678,8 @@ window.Screens = (function () {
         <div class="slide">
           ${post(p, { mini: true })}
           <div class="rev">
-            <div class="rev-verdict">Чи: <span class="rev-pill ${mine.cls}">${mine.icon} ${mine.label}</span> → Зөв нь:
-              <span class="rev-pill ${right.cls}">${right.icon} ${right.label}</span></div>
+            <div class="rev-verdict">Чи: <span class="rev-pill ${mine.cls}">${mine.icon} ${esc(ansLabel(p.category, m.ans))}</span> → Зөв нь:
+              <span class="rev-pill ${right.cls}">${right.icon} ${esc(ansLabel(p.category, Game.truth(p)))}</span></div>
             ${p.technique ? '<span class="rev-tech">' + esc(p.technique) + '</span>' : ''}
             <div>${esc(p.why)}</div>
             ${tip ? '<div class="rev-tip">🛡 ' + esc(tip) + '</div>' : ''}
