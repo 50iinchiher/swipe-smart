@@ -328,7 +328,13 @@ window.Screens = (function () {
           '<span>' + esc(c.name) + '</span><small>' + c.need + ' XP</small></button>'
       : '<button class="cat' + (c.played ? ' done' : ' new') + '" data-cat="' + c.id + '">' + icon(c.icon) + '<span>' + esc(c.name) + '</span>' +
           (c.board ? '<em data-rank="' + c.id + '">' + (rk[c.id] && rk[c.id].rank ? '#' + rk[c.id].rank : '') + '</em>' : '') + '</button>'
-    ).join('');
+    ).join('') +
+      // categories.js-д байгаа ч карт нь хараахан алга: бүдэг "Тун удахгүй" хавтан
+      Object.keys(window.CATEGORIES || {}).filter(id => !Game.cats().some(c => c.id === id)).map(id => {
+        const c = window.CATEGORIES[id];
+        return '<button class="cat soon" data-soon="' + esc(c.name || id) + '">' + icon(c.icon) +
+          '<span>' + esc(c.name || id) + '</span><small>Тун удахгүй</small></button>';
+      }).join('');
 
     // Дээд мөр (гүйдэг): найдвартай эх сурвалжуудын нэр (data/sources.js). Дарахад холбоосын жагсаалт.
     const groups = (window.SOURCES || []).filter(g => g && g.items && g.items.length);
@@ -393,6 +399,8 @@ window.Screens = (function () {
     root.addEventListener('click', e => {
       const c = e.target.closest('[data-cat]');
       if (c) { nav.startCat(c.dataset.cat); return; }
+      const soon = e.target.closest('[data-soon]');
+      if (soon) { toast(soon.dataset.soon + ' · Тун удахгүй'); return; }
       const l = e.target.closest('[data-need]');
       if (l) { toast('🔒 ' + l.dataset.name + ' · ' + l.dataset.need + ' XP цуглуулбал нээгдэнэ'); return; }
       const b = e.target.closest('[data-act]');
