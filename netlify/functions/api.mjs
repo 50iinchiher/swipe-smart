@@ -10,11 +10,13 @@ import { createHash, randomBytes, randomUUID } from 'node:crypto';
 
 // posts.js, claims.js, rules.js нь window.* тодорхойлдог браузерын скрипт. esbuild функцтэй хамт багцална.
 globalThis.window = globalThis.window || {};
+let season = '';   // 's2/' гэх мэт: чансаа, тоглолтын түлхүүрийн угтвар (rules.js-ийн SEASON)
 const ready = import('../../data/posts.js').then(() => import('../../data/claims.js')).then(() => import('../../js/rules.js')).then(() => {
   const byId = {};
   window.POSTS.forEach(p => { byId[p.id] = p; });
   const pools = {};
   window.RULES.CATS.forEach(c => { pools[c.id] = new Set(window.RULES.catPool(window.POSTS, c)); });
+  season = 's' + window.RULES.SEASON + '/';
   return { R: window.RULES, byId, pools, boardCats: window.RULES.CATS.filter(c => c.board).map(c => c.id) };
 });
 
@@ -66,7 +68,7 @@ async function update(s, key, fn) {
 function ranked(board) {
   return Object.keys(board).map(id => Object.assign({ id }, board[id])).sort((a, b) => b.s - a.s || a.t - b.t);
 }
-function boardKey(cat, period) { return 'board/' + (period === 'all' ? 'all' : weekKey()) + '/' + cat; }
+function boardKey(cat, period) { return season + 'board/' + (period === 'all' ? 'all' : weekKey()) + '/' + cat; }
 
 // ---------- Үйлдлүүд ----------
 async function register(req, s) {
@@ -120,7 +122,7 @@ async function submit(req, s, me, ctx) {
 
   const day = dayKey();
   const sc = ctx.R.score(answers.map(a => ({ id: a.id, ans: a.ans })), n, ctx.byId);
-  const once = await s.setJSON('plays/' + me.id + '/' + day + '/' + cat, { ids, answers, pts: sc.pts, at: Date.now() }, { onlyIfNew: true });
+  const once = await s.setJSON(season + 'plays/' + me.id + '/' + day + '/' + cat, { ids, answers, pts: sc.pts, at: Date.now() }, { onlyIfNew: true });
   if (!once.modified) return fail(409, 'Өнөөдөр энэ ангиллыг тоглосон байна');
 
   const add = d => {

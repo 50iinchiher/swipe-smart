@@ -13,6 +13,9 @@ window.RULES = (function () {
     { id: 'facts', name: 'Баримт',      icon: 'book',   need: 3000, topics: ['myth', 'mongolia'] }
   ];
   const PER_GAME = 10;
+  // Чансааны улирал. Дүрэм өөрчлөгдөхөд нэмэгдүүлбэл бүх чансаа тэгээс эхэлнэ (хоч хэвээр).
+  // 2: 10 карт, буруу −5, 🔥3+ бол +15 (2026.10.26)
+  const SEASON = 2;
 
   function catPool(posts, c) {
     const out = [], has = {};
@@ -64,5 +67,5 @@ window.RULES = (function () {
     return { pts, correct, total, best, marks, steps, perfect };
   }
 
-  return { CATS, PER_GAME, POINTS, catPool, truth, judge, score };
+  return { CATS, PER_GAME, SEASON, POINTS, catPool, truth, judge, score };
 })();

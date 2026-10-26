@@ -10,6 +10,11 @@
 
   const q = new URLSearchParams(location.search);
   if (q.get('reset')) Store.clear();
+  // Шинэ улирал: тоглолт, оноо, чансааны өгөгдлийг цэвэрлэнэ. Хоч (бүртгэл) үлдэнэ.
+  if (Store.get('season', 1) !== RULES.SEASON) {
+    ['history', 'current', 'catLog', 'catCur', 'pending', 'ranks', 'xpSeen'].forEach(Store.remove);
+    Store.set('season', RULES.SEASON);
+  }
   let forcedSet = parseInt(q.get('set'), 10) || 0;
   if (forcedSet < 1) forcedSet = 0;
   if (q.has('reset') || q.has('set')) {

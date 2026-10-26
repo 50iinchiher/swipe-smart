@@ -25,6 +25,11 @@ window.Store = (function () {
     if (ls) { try { ls.setItem(PREFIX + key, raw); } catch (e) { /* санах ойд л үлдэнэ */ } }
   }
 
+  function remove(key) {
+    delete mem[key];
+    if (ls) { try { ls.removeItem(PREFIX + key); } catch (e) { /* ignore */ } }
+  }
+
   function clear() {
     Object.keys(mem).forEach(k => delete mem[k]);
     if (!ls) return;
@@ -36,5 +41,5 @@ window.Store = (function () {
     } catch (e) { /* ignore */ }
   }
 
-  return { get, set, clear };
+  return { get, set, remove, clear };
 })();
