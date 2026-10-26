@@ -8,9 +8,7 @@
   --fb:#242526; --fbtext:#E4E6EB; --fbg:#B0B3B8; --fbl:#3E4042; --fbblue:#2D88FF;
   --display:Nunito,Inter,system-ui,sans-serif;
   --mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
-  --safe-t:env(safe-area-inset-top,0px);
-  /* Доод 72px: "Powered by Netlify" шошго товчнуудыг дарахгүй */
-  --safe-b:calc(env(safe-area-inset-bottom,0px) + 72px);
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{height:100%}
@@ -138,6 +136,7 @@ mark{background:#F7B73355;color:inherit;padding:0 2px;border-radius:4px;box-shad
 @keyframes mq{to{transform:translateX(-50%)}}
 
 .homemain{flex:1;min-height:0;display:flex;flex-direction:column;align-items:center;padding:26px 20px 12px;overflow-y:auto}
+.homemain > *{flex-shrink:0}   /* зай дутвал шахагдаж (хоч тасрах) биш, гүйлгэгдэнэ */
 .ava{width:112px;height:112px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;color:#D8D3CB;
   background:var(--surf);border:2.5px solid var(--accent);box-shadow:0 0 50px rgba(247,183,51,.22)}
 .ava .i{width:52px;height:52px;stroke-width:1.8}
