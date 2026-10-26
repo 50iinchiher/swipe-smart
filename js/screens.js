@@ -182,6 +182,8 @@ window.Screens = (function () {
     coins: '<circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/>',
     bag: '<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/>',
     phone: '<rect width="14" height="20" x="5" y="2" rx="2"/><path d="M12 18h.01"/>',
+    moon: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+    sun: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
     tag: '<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r="1" fill="currentColor"/>',
     link: '<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
     eye: '<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
@@ -221,6 +223,16 @@ window.Screens = (function () {
       if (!b || b.dataset.nav === active) return;
       if (b.dataset.nav === 'home') nav.home(); else nav.reset(b.dataset.nav);
     });
+  }
+
+  // Цайвар / харанхуй горим. Сонголт утсанд хадгалагдана; анх ачаалахад index.html-ийн жижиг скрипт шууд тавина.
+  function isDark() { return document.documentElement.dataset.theme === 'dark'; }
+  function setTheme(t) {
+    if (t === 'dark') document.documentElement.dataset.theme = 'dark';
+    else delete document.documentElement.dataset.theme;
+    Store.set('theme', t);
+    const m = document.querySelector('meta[name="theme-color"]');
+    if (m) m.content = t === 'dark' ? '#121211' : '#F5F2EB';
   }
 
   // Доороос гарч ирэх хуудас (цэс, заавар)
@@ -394,12 +406,20 @@ window.Screens = (function () {
         <button class="btn acc" data-m="play">${icon('play')} ${played ? 'Дадлага хийх' : 'Өнөөдрийн 10'}</button>
         ${played ? '<button class="btn ghost" data-m="today">Өнөөдрийн дүн</button>' : ''}
         <button class="btn ghost" data-m="how">Яаж тоглох вэ?</button>
+        <button class="btn ghost theme-row" data-m="theme" role="switch" aria-checked="${isDark()}">
+          ${icon(isDark() ? 'sun' : 'moon')}<span>Харанхуй горим</span><i class="sw${isDark() ? ' on' : ''}" aria-hidden="true"></i></button>
         <div class="hint">Ангилал бүрт өдрийн анхны тоглолт л чансаанд тооцогдоно.</div>`);
       s.el.addEventListener('click', e => {
         const b = e.target.closest('[data-m]');
         if (!b) return;
         if (b.dataset.m === 'play') nav.start(played);
         else if (b.dataset.m === 'today') nav.go('end', { game: Game.todayRecord() });
+        else if (b.dataset.m === 'theme') {
+          setTheme(isDark() ? 'light' : 'dark');
+          b.setAttribute('aria-checked', isDark());
+          $(b, '.sw').classList.toggle('on', isDark());
+          $(b, 'svg').outerHTML = icon(isDark() ? 'sun' : 'moon');
+        }
         else { s.close(); howTo(root); }
       });
     }
