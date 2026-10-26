@@ -1,0 +1,8 @@
+# Netlify: статик файлууд хавтасны үндсэнд, API нь netlify/functions/api.mjs
+[build]
+  publish = "."
+  command = ""
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

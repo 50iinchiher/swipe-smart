@@ -1,0 +1,9 @@
+{
+  "name": "swipe-smart",
+  "private": true,
+  "type": "module",
+  "description": "Swipe Smart · Өдрийн 5. Frontend нь build-гүй цэвэр HTML/JS; package.json зөвхөн Netlify функцэд.",
+  "dependencies": {
+    "@netlify/blobs": "^11.1.6"
+  }
+}

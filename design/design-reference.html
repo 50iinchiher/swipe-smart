@@ -1,0 +1,248 @@
+<!doctype html>
+<html lang="mn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Өдрийн 5 · дизайн</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F7F7F4;--card:#FFFFFF;--ink:#111111;--muted:#8A8A8A;--line:#ECECE8;--false:#F43F5E;--true:#10B981;--unsure:#F59E0B;--accent:#6366F1;--radius:24px;--shadow:0 10px 30px rgba(17,17,17,.10);--fbg:#65676B;--fbl:#E4E6EB}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#E4E4DE;font-family:Inter,system-ui,sans-serif;color:var(--ink);padding:36px 24px}
+.title{font-size:28px;font-weight:900;letter-spacing:-.5px}
+.lead{color:#555;font-size:14px;margin:6px 0 28px;max-width:900px;line-height:1.5}
+.row{display:flex;gap:36px;flex-wrap:wrap;align-items:flex-start}
+.cap{width:390px}.cap h3{font-size:17px;font-weight:800;margin-bottom:4px}.cap p{font-size:12.5px;color:#555;line-height:1.4;margin-bottom:12px;min-height:52px}
+.screen{width:390px;height:844px;border-radius:40px;overflow:hidden;position:relative;display:flex;flex-direction:column;background:var(--bg);box-shadow:0 14px 40px rgba(0,0,0,.16)}
+.status{display:flex;justify-content:space-between;padding:16px 28px 6px;font-size:14px;font-weight:600}
+.pad{padding:0 20px}
+.btn{border-radius:18px;padding:17px;text-align:center;font-weight:800;font-size:16px;background:var(--ink);color:#fff}
+.btn.ghost{background:#fff;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn.acc{background:var(--accent)}
+.muted{color:var(--muted)}
+.logo{font-weight:900;letter-spacing:-1.5px;line-height:.95}
+.logo b{color:var(--accent)}
+/* FB card */
+.post{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:9px;padding-top:14px;overflow:hidden;position:relative}
+.ph{display:flex;gap:9px;align-items:center;padding:0 14px}
+.pav{width:38px;height:38px;border-radius:50%;color:#fff;font-weight:800;font-size:11px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pn{font-size:14.5px;font-weight:700;color:#050505}.pm{font-size:12px;color:var(--fbg)}
+.ptxt{padding:0 14px;font-size:15.5px;line-height:1.42;color:#050505}
+.react{display:flex;justify-content:space-between;padding:0 14px;font-size:12.5px;color:var(--fbg)}
+.acts{display:flex;justify-content:space-between;border-top:1px solid var(--fbl);padding:9px 24px 12px;font-size:12.5px;font-weight:600;color:var(--fbg)}
+.img{position:relative;height:190px;display:flex;align-items:flex-end;padding:9px;font-size:11px;font-weight:700;color:#fff;overflow:hidden}
+.img .capt{position:relative;background:rgba(0,0,0,.55);border-radius:6px;padding:3px 7px;z-index:2}
+.img.product{background:linear-gradient(135deg,#E8F4F2,#BFE3DC)}
+.img.product::before{content:"";position:absolute;left:50%;top:24px;transform:translateX(-50%);width:88px;height:124px;border-radius:16px;background:linear-gradient(#fff,#E5E7EB);box-shadow:0 8px 18px rgba(0,0,0,.15)}
+.sale{position:absolute;right:14px;top:14px;background:var(--false);color:#fff;border-radius:999px;padding:12px 8px;font-size:15px;font-weight:900;transform:rotate(10deg);z-index:2}
+.img.smog{background:linear-gradient(#CFC4AF,#7D7366)}
+.img.smog::before{content:"";position:absolute;inset:auto 0 0 0;height:60%;background:
+ linear-gradient(#3F3A35bf,#3F3A35bf) 0 100%/40px 35% no-repeat,linear-gradient(#3F3A35bf,#3F3A35bf) 34px 100%/28px 55% no-repeat,
+ linear-gradient(#3F3A35bf,#3F3A35bf) 66px 100%/46px 30% no-repeat,linear-gradient(#3F3A35bf,#3F3A35bf) 118px 100%/22px 65% no-repeat,
+ linear-gradient(#3F3A35bf,#3F3A35bf) 144px 100%/40px 42% no-repeat,linear-gradient(#3F3A35bf,#3F3A35bf) 188px 100%/30px 58% no-repeat,
+ linear-gradient(#3F3A35bf,#3F3A35bf) 222px 100%/52px 34% no-repeat,linear-gradient(#3F3A35bf,#3F3A35bf) 278px 100%/24px 50% no-repeat}
+mark{background:#FFE45C;padding:0 2px;border-radius:4px}
+/* play */
+.top{display:flex;align-items:center;gap:12px;padding:6px 20px 10px}
+.bar{flex:1;display:flex;gap:5px}.bar i{flex:1;height:5px;border-radius:9px;background:var(--line)}.bar i.d{background:var(--ink)}
+.x{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--muted);background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)}
+.stage{flex:1;position:relative;padding:8px 18px 0}
+.ghostcard{position:absolute;left:30px;right:30px;top:22px;height:430px;background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);transform:scale(.95) translateY(16px);opacity:.7}
+.ghostcard.two{left:42px;right:42px;transform:scale(.9) translateY(32px);opacity:.4}
+.btns{display:flex;justify-content:center;align-items:center;gap:22px;padding:14px 0 34px}
+.rb{border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;font-weight:900;box-shadow:0 8px 20px rgba(17,17,17,.12)}
+.rb.f{width:68px;height:68px;color:var(--false);font-size:30px}
+.rb.u{width:54px;height:54px;color:var(--unsure);font-size:24px}
+.rb.t{width:68px;height:68px;color:var(--true);font-size:30px}
+.dimbtn .rb{opacity:.35;box-shadow:none}
+.tint{position:absolute;inset:0;border-radius:var(--radius);z-index:3}
+.stamp{position:absolute;z-index:4;font-weight:900;font-size:30px;letter-spacing:2px;border:4px solid;border-radius:12px;padding:2px 12px}
+/* flip back */
+.back{position:relative;z-index:2;background:var(--ink);color:#fff;border-radius:var(--radius);box-shadow:var(--shadow);height:470px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:16px;padding:30px;text-align:center}
+/* end */
+.big{font-size:84px;font-weight:900;letter-spacing:-3px;line-height:1}
+.dots{font-size:30px;letter-spacing:4px}
+.stat3{display:flex;gap:10px;width:100%}.stat3 div{flex:1;background:#fff;border-radius:18px;padding:12px;text-align:center;box-shadow:inset 0 0 0 1.5px var(--line)}.stat3 b{display:block;font-size:22px;font-weight:900}.stat3 small{font-size:11px;color:var(--muted);font-weight:700}
+.conf{position:absolute;width:9px;height:14px;border-radius:2px}
+/* review */
+.verdict{display:flex;align-items:center;gap:8px;font-size:13.5px;font-weight:700}
+.pill{display:inline-flex;align-items:center;gap:4px;border-radius:999px;padding:6px 11px;font-size:12px;font-weight:800}
+.why{background:#fff;border-radius:18px;padding:14px;font-size:13.5px;line-height:1.45;box-shadow:inset 0 0 0 1.5px var(--line)}
+/* lb */
+.tabs{display:flex;background:#fff;border-radius:14px;padding:4px;gap:4px;box-shadow:inset 0 0 0 1.5px var(--line)}
+.tabs span{flex:1;text-align:center;font-size:12.5px;font-weight:800;padding:9px 2px;border-radius:10px;color:var(--muted)}
+.tabs span.on{background:var(--ink);color:#fff}
+.lr{display:flex;align-items:center;gap:12px;padding:12px 4px;border-bottom:1px solid var(--line);font-size:14.5px}
+.lr .n{width:24px;text-align:center;font-weight:900;color:var(--muted)}.lr .nm{flex:1;font-weight:700}.lr .cl{font-size:11.5px;color:var(--muted);font-weight:600;margin-left:6px}.lr .sc{font-weight:900}
+.lr.me{background:#EEF0FF;border-radius:14px;border:none;padding:12px 10px;box-shadow:inset 0 0 0 2px var(--accent)}
+.medal{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;color:#fff}
+.howrow{display:flex;align-items:center;gap:14px;background:#fff;border-radius:18px;padding:12px 14px;box-shadow:inset 0 0 0 1.5px var(--line)}
+.howrow .rb{box-shadow:none;border:2px solid var(--line)}
+.howrow div.t{font-size:14.5px;font-weight:700}.howrow small{display:block;font-size:12px;color:var(--muted);font-weight:600}
+.input{background:#fff;border-radius:16px;padding:15px 16px;font-size:15px;font-weight:600;box-shadow:inset 0 0 0 1.5px var(--line);display:flex;justify-content:space-between}
+</style>
+</head>
+<body>
+<div class="title">Өдрийн 5 · дизайны жишиг</div>
+<p class="lead">Минимал, хүн бүрт ойлгомжтой. Дүр, сум, илүү бичиг байхгүй. Тоглох явцад хариу харуулахгүй — алдаа зөвхөн төгсгөлд, тодруулгатай. Доор 3 бөөрөнхий товч: <b style="color:#F43F5E">✕ Худал</b> · <b style="color:#F59E0B">? Эргэлзээтэй</b> · <b style="color:#10B981">✓ Үнэн</b>.</p>
+<div class="row">
+
+<!-- 1 INTRO -->
+<div class="cap"><h3>1 · Танилцуулга (анх нэг удаа)</h3><p>Тоглохын өмнө л нэг удаа. Дээр жижиг карт баруун-зүүн хөдөлж харагдана. 3 мөр заавар, хоч, Эхлэх.</p>
+<div class="screen">
+ <div class="status"><span>9:41</span><span>100%</span></div>
+ <div class="pad" style="display:flex;flex-direction:column;gap:14px;flex:1;padding-bottom:30px">
+  <div style="position:relative;height:170px;margin-top:8px">
+   <div style="position:absolute;left:50%;top:10px;width:130px;height:150px;background:#fff;border-radius:20px;box-shadow:var(--shadow);transform:translateX(-90%) rotate(-12deg);opacity:.5"></div>
+   <div style="position:absolute;left:50%;top:6px;width:130px;height:150px;background:#fff;border-radius:20px;box-shadow:var(--shadow);transform:translateX(-50%) rotate(6deg);padding:14px;display:flex;flex-direction:column;gap:8px">
+    <div style="display:flex;gap:6px;align-items:center"><span class="pav" style="width:22px;height:22px;background:#6366F1;font-size:8px"></span><span style="height:7px;width:60px;border-radius:9px;background:var(--line)"></span></div>
+    <span style="height:7px;border-radius:9px;background:var(--line)"></span><span style="height:7px;width:80%;border-radius:9px;background:var(--line)"></span>
+    <span style="flex:1;border-radius:10px;background:#EEF0FF"></span>
+    <span style="position:absolute;top:12px;right:-14px;border:3px solid var(--true);color:var(--true);font-weight:900;font-size:13px;padding:1px 6px;border-radius:7px;transform:rotate(14deg);background:#fff">ҮНЭН</span>
+   </div>
+  </div>
+  <div><div class="logo" style="font-size:44px">Өдрийн <b>5</b></div><div class="muted" style="font-size:15px;font-weight:600;margin-top:8px">Өдөрт 5 пост. Худлыг ялга.</div></div>
+  <div style="display:flex;flex-direction:column;gap:8px">
+   <div class="howrow"><span class="rb f" style="width:44px;height:44px;font-size:20px">✕</span><div class="t">Худал<small>Зүүн тийш шидэх</small></div></div>
+   <div class="howrow"><span class="rb u" style="width:44px;height:44px;font-size:20px">?</span><div class="t">Эргэлзээтэй<small>Дээш шидэх · нотолгоо хангалтгүй</small></div></div>
+   <div class="howrow"><span class="rb t" style="width:44px;height:44px;font-size:20px">✓</span><div class="t">Үнэн<small>Баруун тийш шидэх</small></div></div>
+  </div>
+  <div class="muted" style="font-size:12.5px;font-weight:600;text-align:center">💡 Карт дээр дарвал сэжүүр харагдана</div>
+  <div class="input"><span>Анчин-4821</span><span class="muted">хоч ✎</span></div>
+  <div style="flex:1"></div>
+  <div class="btn">Эхлэх</div>
+ </div>
+</div></div>
+
+<!-- 2 HOME -->
+<div class="cap"><h3>2 · Нүүр</h3><p>Нэг гол товч. Дараалсан өдөр, 7 хоногийн байр. Дээд буланд 🏆. Тоглосон бол "Маргааш шинэ 5" countdown.</p>
+<div class="screen">
+ <div class="status"><span>9:41</span><span>100%</span></div>
+ <div class="pad" style="display:flex;justify-content:space-between;align-items:center;padding-top:6px">
+  <span class="pill" style="background:#FFF1E6;color:#EA580C;font-size:13px">🔥 4 өдөр</span>
+  <span class="x" style="width:40px;height:40px;font-size:18px;color:var(--ink)">🏆</span>
+ </div>
+ <div class="pad" style="flex:1;display:flex;flex-direction:column;justify-content:center;gap:22px;padding-bottom:30px">
+  <div><div class="muted" style="font-size:14px;font-weight:700">10 сарын 27 · №3</div><div class="logo" style="font-size:72px;margin-top:6px">Өдрийн<br><b>5</b></div></div>
+  <div style="display:flex;gap:6px"><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;background:var(--ink);color:#fff">✓</span><small style="font-size:11px;font-weight:700;color:var(--muted)">Да</small></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;background:var(--ink);color:#fff">✓</span><small style="font-size:11px;font-weight:700;color:var(--muted)">Мя</small></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;background:var(--ink);color:#fff">✓</span><small style="font-size:11px;font-weight:700;color:var(--muted)">Лх</small></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;background:var(--ink);color:#fff">✓</span><small style="font-size:11px;font-weight:700;color:var(--muted)">Пү</small></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;background:#fff;box-shadow:inset 0 0 0 2px var(--accent);color:var(--accent)">•</span><small style="font-size:11px;font-weight:700;color:var(--muted)">Ба</small></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)"></span><small style="font-size:11px;font-weight:700;color:var(--muted)">Бя</small></div><div style="flex:1;display:flex;flex-direction:column;align-items:center;gap:6px"><span style="width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;background:#fff;box-shadow:inset 0 0 0 1.5px var(--line)"></span><small style="font-size:11px;font-weight:700;color:var(--muted)">Ня</small></div></div>
+  <div class="stat3"><div><b>199</b><small>7 хоногт</small></div><div><b>#5</b><small>байр</small></div><div><b>78%</b><small>нарийвчлал</small></div></div>
+ </div>
+ <div class="pad" style="padding-bottom:34px"><div class="btn" style="font-size:18px;padding:20px">Эхлэх →</div></div>
+</div></div>
+
+<!-- 3 PLAY -->
+<div class="cap"><h3>3 · Тоглох</h3><p>Зөвхөн явц, карт, 3 товч. Сум, бичиг, оноо — байхгүй. Карт гарснаас 1.2 сек товчнууд аажим тодорно.</p>
+<div class="screen">
+ <div class="status"><span>9:41</span><span>100%</span></div>
+ <div class="top"><span class="x">✕</span><div class="bar"><i class="d"></i><i class="d"></i><i></i><i></i><i></i></div></div>
+ <div class="stage">
+  <div class="ghostcard two"></div><div class="ghostcard"></div>
+  <div class="post">
+   <div class="ph"><div class="pav" style="background:#2F9E8F">ЦАШ</div><div style="flex:1"><div class="pn">Цэвэр Агаар Шоп</div><div class="pm">Ивээн тэтгэсэн · 🌐</div></div><span style="color:var(--fbg);font-weight:800">···</span></div>
+   <div class="ptxt">😷 УТААНААС ХҮҮХДЭЭ ХАМГААЛ! Агаар цэвэршүүлэгч 90% ХЯМДРАЛ — ердөө 29,900₮! Зөвхөн ӨНӨӨДӨР. Линк дээр дарж картын мэдээллээ оруулаарай 👇</div>
+   <div class="img product"><span class="sale">−90%</span><span class="capt">299,000₮ → 29,900₮</span></div>
+   <div class="react"><span>😍👍 860</span><span>74 сэтгэгдэл · 420 хуваалцсан</span></div>
+   <div class="acts"><span>👍 Таалагдсан</span><span>💬 Сэтгэгдэл</span><span>↗ Хуваалцах</span></div>
+  </div>
+ </div>
+ <div class="btns"><span class="rb f">✕</span><span class="rb u">?</span><span class="rb t">✓</span></div>
+</div></div>
+
+<!-- 4 DRAG -->
+<div class="cap"><h3>4 · Чирэх</h3><p>Зүүн тийш чирэхэд карт эргэлдэж улаанаар бүдэг будагдана, "ХУДАЛ" тамга тодорно. Харгалзах товч томорно. Чичиргээ.</p>
+<div class="screen">
+ <div class="status"><span>9:41</span><span>100%</span></div>
+ <div class="top"><span class="x">✕</span><div class="bar"><i class="d"></i><i class="d"></i><i></i><i></i><i></i></div></div>
+ <div class="stage">
+  <div class="ghostcard two"></div><div class="ghostcard"></div>
+  <div class="post" style="transform:translate(-70px,10px) rotate(-10deg)">
+   <div class="tint" style="background:rgba(244,63,94,.12)"></div>
+   <div class="stamp" style="top:34px;right:22px;color:var(--false);border-color:var(--false);transform:rotate(14deg)">ХУДАЛ</div>
+   <div class="ph"><div class="pav" style="background:#2F9E8F">ЦАШ</div><div style="flex:1"><div class="pn">Цэвэр Агаар Шоп</div><div class="pm">Ивээн тэтгэсэн · 🌐</div></div></div>
+   <div class="ptxt">😷 УТААНААС ХҮҮХДЭЭ ХАМГААЛ! Агаар цэвэршүүлэгч 90% ХЯМДРАЛ — ердөө 29,900₮! Зөвхөн ӨНӨӨДӨР...</div>
+   <div class="img product"><span class="sale">−90%</span><span class="capt">299,000₮ → 29,900₮</span></div>
+   <div class="react"><span>😍👍 860</span><span>420 хуваалцсан</span></div>
+   <div class="acts"><span>👍</span><span>💬</span><span>↗</span></div>
+  </div>
+ </div>
+ <div class="btns"><span class="rb f" style="transform:scale(1.15);background:var(--false);color:#fff">✕</span><span class="rb u">?</span><span class="rb t">✓</span></div>
+</div></div>
+
+<!-- 5 CLUE -->
+<div class="cap"><h3>5 · Сэжүүр (карт дээр дарах)</h3><p>Карт эргэж ар талд нь 1 сэжүүр. Дахин дарвал буцна. Оноо хасахгүй. Танилцуулгад л дурдагдана.</p>
+<div class="screen">
+ <div class="status"><span>9:41</span><span>100%</span></div>
+ <div class="top"><span class="x">✕</span><div class="bar"><i class="d"></i><i class="d"></i><i></i><i></i><i></i></div></div>
+ <div class="stage">
+  <div class="ghostcard two"></div><div class="ghostcard"></div>
+  <div class="back">
+   <span style="font-size:40px">🔍</span>
+   <div style="font-size:12px;font-weight:800;letter-spacing:2px;color:#A5B4FC">СЭЖҮҮР</div>
+   <div style="font-size:20px;font-weight:700;line-height:1.4">Хуудас 3 хоногийн өмнө үүссэн. Линк картын CVV код асууж байна.</div>
+   <div style="font-size:12.5px;color:#9CA3AF;font-weight:600">Дарж буцаана</div>
+  </div>
+ </div>
+ <div class="btns"><span class="rb f">✕</span><span class="rb u">?</span><span class="rb t">✓</span></div>
+</div></div>
+
+<!-- 6 END -->
+<div class="cap"><h3>6 · Төгсгөл</h3><p>Анх удаа оноо, хариу харагдана. Гол товч — "Алдаагаа харах". 5/5 бол confetti.</p>
+<div class="screen">
+ <div class="status"><span>9:41</span><span>100%</span></div>
+ <span class="conf" style="background:#6366F1;left:60px;top:90px;transform:rotate(20deg)"></span><span class="conf" style="background:#F59E0B;left:300px;top:120px;transform:rotate(-30deg)"></span><span class="conf" style="background:#10B981;left:180px;top:70px"></span><span class="conf" style="background:#F43F5E;left:330px;top:210px;transform:rotate(50deg)"></span><span class="conf" style="background:#6366F1;left:40px;top:220px;transform:rotate(-15deg)"></span>
+ <div class="pad" style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center">
+  <div class="muted" style="font-size:14px;font-weight:700">Өдрийн 5 · №3</div>
+  <div class="big">3<span class="muted" style="font-size:46px">/5</span></div>
+  <div class="dots">🟩🟥🟩🟩🟨</div>
+  <div class="stat3" style="margin-top:6px"><div><b>45</b><small>оноо</small></div><div><b>🔥 2</b><small>дараалсан</small></div><div><b>#5</b><small>7 хоногт</small></div></div>
+ </div>
+ <div class="pad" style="display:flex;flex-direction:column;gap:10px;padding-bottom:34px">
+  <div class="btn acc">Алдаагаа харах (2) →</div>
+  <div style="display:flex;gap:10px"><div class="btn ghost" style="flex:1">↗ Хуваалцах</div><div class="btn ghost" style="flex:1">🏆 Leaderboard</div></div>
+ </div>
+</div></div>
+
+<!-- 7 REVIEW -->
+<div class="cap"><h3>7 · Алдааны дүн</h3><p>Алдсан пост бүр: юуг анзаарах ёстой байсныг <mark>шараар</mark>, чиний ба зөв хариулт, аргын шошго, 1 мөр. Доор "Таны сул тал".</p>
+<div class="screen">
+ <div class="status"><span>9:41</span><span>100%</span></div>
+ <div class="top"><span class="x">←</span><b style="flex:1;font-size:16px">Алдаа 1 / 2</b><span class="muted" style="font-size:13px;font-weight:700">Дараах →</span></div>
+ <div class="pad" style="flex:1;display:flex;flex-direction:column;gap:12px">
+  <div class="verdict"><span class="pill" style="background:#ECFDF5;color:var(--true)">Чи: ✓ Үнэн</span><span class="muted">→</span><span class="pill" style="background:#FFE4E8;color:var(--false)">Зөв нь: ✕ Худал</span></div>
+  <div class="post">
+   <div class="ph"><div class="pav" style="background:#5B6B80">УБШ</div><div style="flex:1"><div class="pn">УБ Шуурхай Мэдээ</div><div class="pm">2 цагийн өмнө · 🌐</div></div></div>
+   <div class="ptxt">😱 <mark>ӨНӨӨ ӨГЛӨӨ УБ</mark>!! Ийм утаан дунд хүүхдээ яаж өсгөх вэ?! Хуваалцаад бүгдэд мэдүүлээрэй 👇</div>
+   <div class="img smog" style="height:140px"><span class="capt" style="background:#FFE45C;color:#111">📅 Анх 2019.12.04</span></div>
+   <div style="height:4px"></div>
+  </div>
+  <span class="pill" style="background:var(--ink);color:#fff;align-self:flex-start;font-size:13px;padding:8px 13px">🏷 Хуучин зураг</span>
+  <div class="why">Утаа бодит ч зураг <b>2019 оных</b>. Хуучин зургийг «өнөөдөр» гэж тараажээ.<div class="muted" style="font-size:12px;margin-top:6px;font-weight:600">Шалгасан: Баримт Шалгах Төв (зохиомол)</div></div>
+  <div style="flex:1"></div>
+  <div style="background:#EEF0FF;border-radius:18px;padding:13px 14px;font-size:13px;line-height:1.45;margin-bottom:30px"><b>🎯 Таны сул тал:</b> Хуучин зураг (2 удаа). Зургийн анхны огноог шалга.</div>
+ </div>
+</div></div>
+
+<!-- 8 LEADERBOARD -->
+<div class="cap"><h3>8 · Leaderboard</h3><p>Энэ 7 хоног · 3 таб. Шилдэг 3 медальтай. Өөрийн мөр индиго хүрээтэй. Зөвхөн хоч.</p>
+<div class="screen">
+ <div class="status"><span>9:41</span><span>100%</span></div>
+ <div class="top"><span class="x">←</span><b style="flex:1;font-size:20px;font-weight:900">Энэ 7 хоног</b><span class="muted" style="font-size:12px;font-weight:700">Даваа шинэчлэгдэнэ</span></div>
+ <div class="pad" style="flex:1;display:flex;flex-direction:column;gap:8px">
+  <div class="tabs"><span class="on">Хувь хүн</span><span>Анги</span><span>Ахисан</span></div>
+  <div style="margin-top:6px">
+   <div class="lr"><span class="medal" style="background:#F59E0B">1</span><span class="nm">Тэмүүжин<span class="cl">11А-ШБ</span></span><span class="sc">248</span></div>
+   <div class="lr"><span class="medal" style="background:#9CA3AF">2</span><span class="nm">Номин<span class="cl">11А-ШБ</span></span><span class="sc">231</span></div>
+   <div class="lr"><span class="medal" style="background:#B45309">3</span><span class="nm">Билгүүн<span class="cl">10Б-ЭЕ</span></span><span class="sc">219</span></div>
+   <div class="lr"><span class="n">4</span><span class="nm">Ану<span class="cl">12В-ХУ</span></span><span class="sc">205</span></div>
+   <div class="lr me"><span class="n" style="color:var(--accent)">5</span><span class="nm">Анчин-4821 <span class="pill" style="background:var(--accent);color:#fff;padding:2px 8px;font-size:10.5px">Чи</span><span class="cl">11А-ШБ</span></span><span class="sc">199</span></div>
+   <div class="lr"><span class="n">6</span><span class="nm">Энхжин<span class="cl">10Б-ЭЕ</span></span><span class="sc">192</span></div>
+   <div class="lr"><span class="n">7</span><span class="nm">Мишээл<span class="cl">12В-ХУ</span></span><span class="sc">176</span></div>
+  </div>
+  <div style="flex:1"></div>
+  <div class="muted" style="font-size:11.5px;text-align:center;padding-bottom:30px;font-weight:600">Демо · Зөвхөн хоч хадгална</div>
+ </div>
+</div></div>
+
+</div>
+</body>
+</html>
