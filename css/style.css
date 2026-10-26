@@ -507,3 +507,9 @@ mark{background:#F7B73355;color:inherit;padding:0 2px;border-radius:4px;box-shad
 .chat.mini,.mail.mini{flex-shrink:0;user-select:text;-webkit-user-select:text}
 /* Пост, чат, имэйл карт өөр өөр өндөртэй тул ард нь овоолсон картыг нууна (дараагийнх нь тодорч гарна) */
 .card:not([data-pos="0"]):has(.fb, .chat, .mail){opacity:0}
+/* Чансааны ангиллын таб олон болбол хажуу тийш гүйлгэнэ */
+.seg:not(.sm){overflow-x:auto;scrollbar-width:none}
+.seg:not(.sm)::-webkit-scrollbar{display:none}
+.seg:not(.sm) button{flex:1 0 auto;padding:0 14px;white-space:nowrap}
+.seg .i.emo{font-size:16px}
+.mebar[hidden]{display:none}
