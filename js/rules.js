@@ -32,28 +32,37 @@ window.RULES = (function () {
     return ans === 'unsure' ? 'meh' : 'bad';
   }
 
+  // Оноо: зөв +10 (🔥3-аас дээш дараалсан бол +15), буруу −5, эргэлзээтэй 0, бүгд зөв бол +20.
+  // Тоглолтын оноо 0-ээс доош буухгүй. Хурд нөлөөгүй.
+  const POINTS = { ok: 10, combo: 5, comboFrom: 3, bad: -5, meh: 0, perfect: 20 };
+
   // answers: [{ id, ans }], total: постын тоо, byId: { id: post }
+  // steps[k]: k дахь хариултаар оноо яг хэдээр өөрчлөгдсөн (d), тэр үеийн streak (run)
   function score(answers, total, byId) {
     let pts = 0, run = 0, best = 0, correct = 0;
-    const marks = [];
+    const marks = [], steps = [];
     answers.forEach(a => {
       const p = byId[a.id];
       if (!p) return;
       const r = judge(p, a.ans);
-      marks.push(r);
+      let d = POINTS.meh;                 // эргэлзээтэй: streak хадгална
       if (r === 'ok') {
-        pts += 10; correct++; run++;
-        if (run % 3 === 0) pts += 5;    // 3, 6, 9 дараалан зөв бүрд
+        correct++; run++;
         if (run > best) best = run;
-      } else if (r === 'meh') {
-        pts += 2;                       // streak тасрахгүй, нэмэгдэхгүй
-      } else {
+        d = POINTS.ok + (run >= POINTS.comboFrom ? POINTS.combo : 0);
+      } else if (r === 'bad') {
         run = 0;
+        d = POINTS.bad;
       }
+      const before = pts;
+      pts = Math.max(0, pts + d);
+      marks.push(r);
+      steps.push({ r, d: pts - before, run });
     });
-    if (total && correct === total) pts += 10;
-    return { pts, correct, total, best, marks };
+    const perfect = total > 0 && correct === total;
+    if (perfect) pts += POINTS.perfect;
+    return { pts, correct, total, best, marks, steps, perfect };
   }
 
-  return { CATS, PER_GAME, catPool, truth, judge, score };
+  return { CATS, PER_GAME, POINTS, catPool, truth, judge, score };
 })();

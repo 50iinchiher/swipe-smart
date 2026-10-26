@@ -230,7 +230,11 @@ window.Screens = (function () {
         <div class="howrow"><span class="ic u">${icon('chevU')}</span><div><b>Эргэлзээтэй</b><small>Дээш шидэх · нотолгоо хангалтгүй</small></div></div>
         <div class="howrow"><span class="ic t">${icon('chev')}</span><div><b>Үнэн</b><small>Баруун тийш шидэх</small></div></div>
       </div>
-      <div class="hint">💡 Карт дээр дарвал сэжүүр харагдана</div>
+      <div class="pts">
+        <span><b class="t">+10</b>Зөв</span><span><b class="t">+15</b>🔥3+ дараалан</span>
+        <span><b class="f">−5</b>Буруу</span><span><b class="u">0</b>Эргэлзээтэй</span>
+      </div>
+      <div class="hint">Бүгд зөв бол +20 · Хурд нөлөөгүй · 💡 Карт дээр дарвал сэжүүр</div>
       <button class="btn acc" data-close>Ойлголоо</button>`);
     if (onClose) new MutationObserver((m, o) => { if (!s.el.isConnected) { o.disconnect(); onClose(); } })
       .observe(s.el.parentNode, { childList: true });
@@ -486,11 +490,19 @@ window.Screens = (function () {
     // Хариулсан даруйд авсан оноог (+10, +2, 0) том тэмдгээр, дээд буланд нийт оноог харуулна
     const ptsEl = $(root, '[data-pts]'), pill = $(root, '.spill');
     const FX = { ok: 'Зөв', meh: 'Эргэлзээтэй', bad: 'Буруу' };
-    function flash(r, delta, run) {
+    // st: rules.js-ийн score().steps-ийн сүүлийн алхам { r, d, run }
+    function flash(st, perfect) {
+      const P = window.RULES.POINTS, r = st.r;
+      let big = st.d > 0 ? '+' + st.d : st.d < 0 ? '−' + (-st.d) : r === 'bad' ? '✗' : '0';
+      let sub = FX[r];
+      if (r === 'ok' && st.run >= 2) sub += ' · 🔥' + st.run;
+      if (r === 'ok' && st.run >= P.comboFrom) sub += ' · +' + P.combo + ' бонус';
+      if (r === 'meh') sub += ' · 🔥 хадгалагдлаа';
+      if (r === 'bad' && st.d === 0) sub += ' · 0-ээс доош буухгүй';
       const el = document.createElement('div');
       el.className = 'fx ' + r;
-      el.innerHTML = '<b>' + (r === 'bad' ? '✗' : '+' + delta) + '</b><span>' + FX[r] +
-        (r === 'bad' ? ' · 0 оноо' : '') + (r === 'ok' && run >= 2 ? ' · 🔥' + run : '') + '</span>';
+      el.innerHTML = '<b>' + big + '</b><span>' + sub + '</span>' +
+        (perfect ? '<em>🎉 Бүгд зөв · +' + P.perfect + '</em>' : '');
       $(root, '.screen').appendChild(el);
       setTimeout(() => el.remove(), 1100);
       pill.className = 'spill ' + r;
@@ -501,12 +513,9 @@ window.Screens = (function () {
     }
 
     function commit(dir) {
-      const before = Game.score(game);
       game.answers.push({ id: posts[i].id, ans: dir });
-      const after = Game.score(game), r = after.marks[after.marks.length - 1];
-      let run = 0;
-      for (let k = after.marks.length - 1; k >= 0 && after.marks[k] !== 'bad'; k--) if (after.marks[k] === 'ok') run++;
-      flash(r, after.pts - before.pts, run);
+      const after = Game.score(game);
+      flash(after.steps[after.steps.length - 1], after.perfect);
       cards[i].remove();
       delete cards[i];
       i++;
